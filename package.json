@@ -1,16 +1,14 @@
 {
-  "name": "graphology-communities",
+  "name": "graphology-communities-louvain",
   "version": "0.1.0",
-  "description": "Partitioning metrics and community detection algorithms for graphology",
+  "description": "Louvain community detection for graphology.",
   "main": "index.js",
   "files": [
-    "index.js",
-    "louvain.js",
-    "modularity.js"
+    "index.js"
   ],
   "scripts": {
-    "lint": "eslint *.js",
-    "test": "mocha test.js"
+    "lint": "eslint *.js test/*.js",
+    "test": "mocha test"
   },
   "keywords": [
     "community",
@@ -20,16 +18,23 @@
     "louvain",
     "modularity"
   ],
-  "author": {
-    "name": "Tanguy LUCCI",
-    "url": "http://github.com/luccitan"
-  },
+  "contributors": [
+    {
+      "name": "Guillaume Plique",
+      "url": "http://github.com/Yomguithereal"
+    },
+    {
+      "name": "Tanguy Lucci",
+      "url": "https://github.com/luccitan"
+    }
+  ],
   "license": "MIT",
   "devDependencies": {
     "@yomguithereal/eslint-config": "^3.0.0",
     "chai": "^3.5.0",
     "eslint": "^3.15.0",
-    "graphology": "^0.4.1",
+    "graphology": "^0.7.1",
+    "graphology-metrics": "^1.1.1",
     "mocha": "^3.2.0"
   },
   "dependencies": {
