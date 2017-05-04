@@ -8,16 +8,6 @@ var assert = require('chai').assert,
     louvain = require('../');
 
 /**
- * Datasets.
- */
-var clique3 = require('./datasets/clique3.json'),
-    complex500 = require('./datasets/complex500.json'),
-    undirected500 = require('./datasets/undirected500.json'),
-    mixed1000 = require('./datasets/mixed1000.json'),
-    undirected1000 = require('./datasets/undirected1000.json'),
-    directed1000 = require('./datasets/directed1000.json');
-
-/**
  * Test helpers.
  */
 var TYPE = {
@@ -27,13 +17,12 @@ var TYPE = {
 };
 
 function distinctSize(obj) {
-  var indexer = {};
+  var indexer = new Set();
 
   for (var element in obj)
-    if (!indexer[obj[element]])
-      indexer[obj[element]] = true;
+    indexer.add(obj[element]);
 
-  return Object.keys(indexer).length;
+  return indexer.size;
 }
 
 function parse(dataset, t) {
@@ -59,6 +48,16 @@ function parse(dataset, t) {
 
   return {graph: graph, partitioning: partitioning};
 }
+
+/**
+ * Datasets.
+ */
+var clique3 = parse(require('./datasets/clique3.json'), TYPE.UNDIRECTED),
+    complex500 = parse(require('./datasets/complex500.json'), TYPE.UNDIRECTED),
+    undirected500 = parse(require('./datasets/undirected500.json'), TYPE.UNDIRECTED),
+    mixed1000 = parse(require('./datasets/mixed1000.json'), TYPE.MIXED),
+    undirected1000 = parse(require('./datasets/undirected1000.json'), TYPE.UNDIRECTED),
+    directed1000 = parse(require('./datasets/directed1000.json'), TYPE.DIRECTED);
 
 /**
  * Actual unit tests.
@@ -90,88 +89,84 @@ describe('graphology-communities-louvain', function() {
   });
 
   it('should assign the new community on `community` attribute by default', function() {
-    var o = parse(clique3, TYPE.UNDIRECTED),
-        attr = 'community';
+    var attr = 'community',
+        graph = clique3.graph;
 
-    louvain.assign(o.graph);
+    louvain.assign(graph);
 
-    assert.equal(o.graph.getNodeAttribute(0, attr), o.graph.getNodeAttribute(1, attr));
-    assert.equal(o.graph.getNodeAttribute(1, attr), o.graph.getNodeAttribute(2, attr));
-    assert.equal(o.graph.getNodeAttribute(2, attr), o.graph.getNodeAttribute(3, attr));
+    assert.strictEqual(graph.getNodeAttribute(0, attr), graph.getNodeAttribute(1, attr));
+    assert.strictEqual(graph.getNodeAttribute(1, attr), graph.getNodeAttribute(2, attr));
+    assert.strictEqual(graph.getNodeAttribute(2, attr), graph.getNodeAttribute(3, attr));
 
-    assert.equal(o.graph.getNodeAttribute(4, attr), o.graph.getNodeAttribute(5, attr));
-    assert.equal(o.graph.getNodeAttribute(5, attr), o.graph.getNodeAttribute(6, attr));
-    assert.equal(o.graph.getNodeAttribute(6, attr), o.graph.getNodeAttribute(7, attr));
+    assert.strictEqual(graph.getNodeAttribute(4, attr), graph.getNodeAttribute(5, attr));
+    assert.strictEqual(graph.getNodeAttribute(5, attr), graph.getNodeAttribute(6, attr));
+    assert.strictEqual(graph.getNodeAttribute(6, attr), graph.getNodeAttribute(7, attr));
 
-    assert.equal(o.graph.getNodeAttribute(8, attr), o.graph.getNodeAttribute(9, attr));
-    assert.equal(o.graph.getNodeAttribute(9, attr), o.graph.getNodeAttribute('10', attr));
-    assert.equal(o.graph.getNodeAttribute('10', attr), o.graph.getNodeAttribute('11', attr));
+    assert.strictEqual(graph.getNodeAttribute(8, attr), graph.getNodeAttribute(9, attr));
+    assert.strictEqual(graph.getNodeAttribute(9, attr), graph.getNodeAttribute('10', attr));
+    assert.strictEqual(graph.getNodeAttribute('10', attr), graph.getNodeAttribute('11', attr));
   });
 
   it('should assign the new community with a custom attribute name', function() {
-    var o = parse(clique3, TYPE.UNDIRECTED),
-        attr = 'foo';
+    var attr = 'foo',
+        graph = clique3.graph;
 
-    louvain.assign(o.graph, {attributes: {community: 'foo'}});
+    louvain.assign(graph, {attributes: {community: 'foo'}});
 
-    assert.equal(o.graph.getNodeAttribute(0, attr), o.graph.getNodeAttribute(1, attr));
-    assert.equal(o.graph.getNodeAttribute(1, attr), o.graph.getNodeAttribute(2, attr));
-    assert.equal(o.graph.getNodeAttribute(2, attr), o.graph.getNodeAttribute(3, attr));
+    assert.strictEqual(graph.getNodeAttribute(0, attr), graph.getNodeAttribute(1, attr));
+    assert.strictEqual(graph.getNodeAttribute(1, attr), graph.getNodeAttribute(2, attr));
+    assert.strictEqual(graph.getNodeAttribute(2, attr), graph.getNodeAttribute(3, attr));
 
-    assert.equal(o.graph.getNodeAttribute(4, attr), o.graph.getNodeAttribute(5, attr));
-    assert.equal(o.graph.getNodeAttribute(5, attr), o.graph.getNodeAttribute(6, attr));
-    assert.equal(o.graph.getNodeAttribute(6, attr), o.graph.getNodeAttribute(7, attr));
+    assert.strictEqual(graph.getNodeAttribute(4, attr), graph.getNodeAttribute(5, attr));
+    assert.strictEqual(graph.getNodeAttribute(5, attr), graph.getNodeAttribute(6, attr));
+    assert.strictEqual(graph.getNodeAttribute(6, attr), graph.getNodeAttribute(7, attr));
 
-    assert.equal(o.graph.getNodeAttribute(8, attr), o.graph.getNodeAttribute(9, attr));
-    assert.equal(o.graph.getNodeAttribute(9, attr), o.graph.getNodeAttribute('10', attr));
-    assert.equal(o.graph.getNodeAttribute('10', attr), o.graph.getNodeAttribute('11', attr));
+    assert.strictEqual(graph.getNodeAttribute(8, attr), graph.getNodeAttribute(9, attr));
+    assert.strictEqual(graph.getNodeAttribute(9, attr), graph.getNodeAttribute('10', attr));
+    assert.strictEqual(graph.getNodeAttribute('10', attr), graph.getNodeAttribute('11', attr));
   });
 
   it('should handle a small undirected graph with 3 connected cliques', function() {
-    var o = parse(clique3, TYPE.UNDIRECTED);
-    var communities = louvain(o.graph);
+    var communities = louvain(clique3.graph);
 
-    assert.closeTo(modularity(o.graph, {communities: communities}), 0.524, 0.001);
-    assert.equal(distinctSize(communities), distinctSize(o.partitioning));
+    assert.closeTo(modularity(clique3.graph, {communities: communities}), 0.524, 0.001);
+
+    // TODO: why not compare the partitionning better?
+    assert.strictEqual(distinctSize(communities), distinctSize(clique3.partitioning));
   });
 
   it('should handle heavy-sized complex graph (undirected, weighted, with self-loops) (500 nodes, 4302 links)', function() {
-    var o = parse(complex500, TYPE.UNDIRECTED);
-    var communities = louvain(o.graph);
+    var communities = louvain(complex500.graph);
 
-    assert.closeTo(modularity(o.graph, {communities: communities}), 0.407, 0.01);
-    assert.equal(distinctSize(communities), distinctSize(o.partitioning));
+    assert.closeTo(modularity(complex500.graph, {communities: communities}), 0.407, 0.01);
+    assert.strictEqual(distinctSize(communities), distinctSize(complex500.partitioning));
   });
 
  it('should handle heavy-sized undirected graph (500 nodes, 4813 links)', function() {
-    var o = parse(undirected500, TYPE.UNDIRECTED);
-    var communities = louvain(o.graph);
+    var communities = louvain(undirected500.graph);
 
-    assert.closeTo(modularity(o.graph, {communities: communities}), 0.397, 0.01);
-    assert.equal(distinctSize(communities), distinctSize(o.partitioning));
+    assert.closeTo(modularity(undirected500.graph, {communities: communities}), 0.397, 0.01);
+    assert.strictEqual(distinctSize(communities), distinctSize(undirected500.partitioning));
   });
 
   it('should handle heavy-sized mixed graph (1000 nodes, 6907 links)', function() {
-    var o = parse(mixed1000, TYPE.MIXED);
-    var communities = louvain(o.graph);
+    var communities = louvain(mixed1000.graph);
 
-    assert.closeTo(modularity(o.graph, {communities: communities}), 0.354, 0.01);
-    assert.equal(distinctSize(communities), 8);
+    assert.closeTo(modularity(mixed1000.graph, {communities: communities}), 0.354, 0.01);
+    assert.strictEqual(distinctSize(communities), 8);
   });
 
   it('should handle heavy-sized undirected graph (1000 nodes, 9724 links)', function() {
-    var o = parse(undirected1000, TYPE.UNDIRECTED);
-    var communities = louvain(o.graph);
+    var communities = louvain(undirected1000.graph);
 
-    assert.closeTo(modularity(o.graph, {communities: communities}), 0.437, 0.01);
-    assert.equal(distinctSize(communities), distinctSize(o.partitioning));
+    assert.closeTo(modularity(undirected1000.graph, {communities: communities}), 0.437, 0.01);
+    assert.strictEqual(distinctSize(communities), distinctSize(undirected1000.partitioning));
   });
 
   it('should handle heavy-sized directed graph (1000 nodes, 10000 links)', function() {
-    var o = parse(directed1000, TYPE.DIRECTED);
-    var communities = louvain(o.graph);
+    var communities = louvain(directed1000.graph);
 
-    assert.closeTo(modularity(o.graph, {communities: communities}), 0.433, 0.01);
-    assert.equal(distinctSize(communities), distinctSize(o.partitioning));
+    assert.closeTo(modularity(directed1000.graph, {communities: communities}), 0.433, 0.01);
+    assert.strictEqual(distinctSize(communities), distinctSize(directed1000.partitioning));
   });
 });

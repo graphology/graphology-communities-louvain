@@ -42,6 +42,9 @@
     "lodash": "^4.17.4"
   },
   "eslintConfig": {
-    "extends": "@yomguithereal/eslint-config"
+    "extends": "@yomguithereal/eslint-config",
+    "globals": {
+      "Set": true
+    }
   }
 }
