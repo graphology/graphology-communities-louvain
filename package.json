@@ -15,8 +15,7 @@
     "detection",
     "graph",
     "graphology",
-    "louvain",
-    "modularity"
+    "louvain"
   ],
   "contributors": [
     {
