@@ -95,8 +95,8 @@ var clique3 = parse(require('./datasets/clique3.json'), TYPE.UNDIRECTED),
  */
 describe('graphology-communities-louvain', function() {
 
-  // Disabling test timeout
-  this.timeout(0);
+  // High timeout
+  this.timeout(30 * 1000);
 
   it('should throw if given graph is invalid.', function() {
     assert.throws(function() {
