@@ -58,6 +58,9 @@ function louvain(assign, graph, options) {
   // Attributes name
   options = defaults({}, options, DEFAULTS);
 
+  var weightAttribute = options.attributes.weight,
+      communityAttribute = options.attributes.community;
+
   var nodes = graph.nodes(),
       edges,
       dendogram = {};
@@ -89,6 +92,8 @@ function louvain(assign, graph, options) {
   var i, l1,
       j, l2,
       k, l3,
+      iterator,
+      step,
       keys,
       node, node2, edge, edge2, bounds,
       community, community2;
@@ -115,15 +120,14 @@ function louvain(assign, graph, options) {
     for (i = 0, l1 = nodes.length; i < l1; i++) {
       node = nodes[i];
       belongings[node] = node;
-      possessions[node] = {};
-      possessions[node][node] = true;
+      possessions[node] = new Set([node]);
       indegree[node] = 0;
       outdegree[node] = 0;
     }
     for (i = 0, l1 = edges.length; i < l1; i++) {
       edge = edges[i];
       bounds = pgraph.extremities(edge);
-      w = pgraph.getEdgeAttribute(edge, options.attributes.weight);
+      w = pgraph.getEdgeAttribute(edge, weightAttribute);
       weight = isNaN(w) ? 1 : w;
       weights[edge] = weight;
 
@@ -165,9 +169,10 @@ function louvain(assign, graph, options) {
         oldc = {in: 0, out: 0};
 
         // Computing current community values
-        stack = Object.keys(possessions[community]);
-        for (j = 0, l2 = stack.length; j < l2; j++) {
-          node2 = stack[j];
+        iterator = possessions[community].values();
+
+        while ((step = iterator.next(), !step.done)) {
+          node2 = step.value;
           if (node !== node2) {
             oldc.in += indegree[node2];
             oldc.out += outdegree[node2];
@@ -190,9 +195,10 @@ function louvain(assign, graph, options) {
           between.new = 0;
           newc = {in: 0, out: 0};
 
-          stack = Object.keys(possessions[community2]);
-          for (k = 0, l3 = stack.length; k < l3; k++) {
-            node2 = stack[k];
+          iterator = possessions[community2].values();
+
+          while ((step = iterator.next(), !step.done)) {
+            node2 = step.value;
             newc.in += indegree[node2];
             newc.out += outdegree[node2];
             between.new += weights[pgraph.edge(node, node2)] || 0;
@@ -214,12 +220,14 @@ function louvain(assign, graph, options) {
           enhancingPass = true;
           altered.curr[community] = true; // see top notes
           altered.curr[nextCommunity] = true;
-          delete possessions[community][node];
-          if (Object.keys(possessions[community]).length === 0)
+
+          possessions[community].delete(node);
+
+          if (!possessions[community].size)
             delete possessions[community];
 
           belongings[node] = nextCommunity;
-          possessions[nextCommunity][node] = node;
+          possessions[nextCommunity].add(node);
         }
       }
       altered.flag = true; // SEE NOTES AT THE TOP
@@ -236,9 +244,8 @@ function louvain(assign, graph, options) {
       bgraph.upgradeToMixed();
 
       // Adding the nodes
-      keys = Object.keys(possessions);
-      for (i = 0, l1 = keys.length; i < l1; i++)
-        bgraph.addNode(keys[i]);
+      for (node in possessions)
+        bgraph.addNode(node);
 
       // Adding the edges
       for (i = 0, l1 = edges.length; i < l1; i++) {
@@ -252,8 +259,8 @@ function louvain(assign, graph, options) {
         if (edge2 === undefined)
           bgraph.addDirectedEdge(community, community2, {weight: w});
         else {
-          weight = bgraph.getEdgeAttribute(edge2, options.attributes.weight);
-          bgraph.setEdgeAttribute(edge2, options.attributes.weight, weight + w);
+          weight = bgraph.getEdgeAttribute(edge2, weightAttribute);
+          bgraph.setEdgeAttribute(edge2, weightAttribute, weight + w);
         }
 
         if (pgraph.undirected(edge) && bounds[0] !== bounds[1]) {
@@ -261,16 +268,14 @@ function louvain(assign, graph, options) {
           if (edge2 === undefined)
             bgraph.addDirectedEdge(community2, community, {weight: w});
           else {
-            weight = bgraph.getEdgeAttribute(edge2, options.attributes.weight);
-            bgraph.setEdgeAttribute(edge2, options.attributes.weight, weight + w);
+            weight = bgraph.getEdgeAttribute(edge2, weightAttribute);
+            bgraph.setEdgeAttribute(edge2, weightAttribute, weight + w);
           }
         }
       }
 
       // Updating the dendogram
-      nodes = Object.keys(dendogram);
-      for (i = 0, l1 = nodes.length; i < l1; i++) {
-        node = nodes[i];
+      for (node in dendogram) {
         community = belongings[dendogram[node][dendogram[node].length - 1]];
         dendogram[node].push(community);
       }
@@ -280,14 +285,17 @@ function louvain(assign, graph, options) {
     }
   } while (enhancingPass);
 
-  nodes = Object.keys(dendogram);
-
   // Assigning
-  if (assign)
-    for (i = 0, l1 = nodes.length; i < l1; i ++) {
-      node = nodes[i];
-      graph.setNodeAttribute(node, options.attributes.community, dendogram[node][dendogram[node].length - 1]);
-    }
+  if (assign) {
+    for (node in dendogram)
+      graph.setNodeAttribute(
+        node,
+        communityAttribute,
+        dendogram[node][dendogram[node].length - 1]
+      );
+
+    return;
+  }
 
   // Standard case ; getting the final partitions from the dendogram
   for (node in dendogram)

@@ -135,8 +135,8 @@ describe('graphology-communities-louvain', function() {
     assert.strictEqual(graph.getNodeAttribute(6, attr), graph.getNodeAttribute(7, attr));
 
     assert.strictEqual(graph.getNodeAttribute(8, attr), graph.getNodeAttribute(9, attr));
-    assert.strictEqual(graph.getNodeAttribute(9, attr), graph.getNodeAttribute('10', attr));
-    assert.strictEqual(graph.getNodeAttribute('10', attr), graph.getNodeAttribute('11', attr));
+    assert.strictEqual(graph.getNodeAttribute(9, attr), graph.getNodeAttribute(10, attr));
+    assert.strictEqual(graph.getNodeAttribute(10, attr), graph.getNodeAttribute(11, attr));
   });
 
   it('should assign the new community with a custom attribute name', function() {
@@ -154,8 +154,8 @@ describe('graphology-communities-louvain', function() {
     assert.strictEqual(graph.getNodeAttribute(6, attr), graph.getNodeAttribute(7, attr));
 
     assert.strictEqual(graph.getNodeAttribute(8, attr), graph.getNodeAttribute(9, attr));
-    assert.strictEqual(graph.getNodeAttribute(9, attr), graph.getNodeAttribute('10', attr));
-    assert.strictEqual(graph.getNodeAttribute('10', attr), graph.getNodeAttribute('11', attr));
+    assert.strictEqual(graph.getNodeAttribute(9, attr), graph.getNodeAttribute(10, attr));
+    assert.strictEqual(graph.getNodeAttribute(10, attr), graph.getNodeAttribute(11, attr));
   });
 
   it('should handle a small undirected graph with 3 connected cliques', function() {
