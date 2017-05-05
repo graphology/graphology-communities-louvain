@@ -233,6 +233,7 @@ function louvain(assign, graph, options) {
      */
     if (enhancingPass) {
       bgraph = pgraph.emptyCopy();
+      bgraph.upgradeToMixed();
 
       // Adding the nodes
       keys = Object.keys(possessions);

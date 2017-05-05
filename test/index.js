@@ -11,9 +11,9 @@ var assert = require('chai').assert,
  * Test helpers.
  */
 var TYPE = {
-  UNDIRECTED: 1,
-  DIRECTED: 2,
-  MIXED: 3,
+  UNDIRECTED: 'undirected',
+  DIRECTED: 'directed',
+  MIXED: 'mixed',
 };
 
 function distinctSize(obj) {
@@ -26,7 +26,7 @@ function distinctSize(obj) {
 }
 
 function parse(dataset, t) {
-   var graph = new Graph(),
+   var graph = new Graph({type: t}),
        n = dataset.nodes,
        e = dataset.edges,
        partitioning = {},
