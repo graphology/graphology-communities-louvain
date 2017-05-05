@@ -25,6 +25,37 @@ function distinctSize(obj) {
   return indexer.size;
 }
 
+// function comparePartitions(p1, p2) {
+//   var g1 = {},
+//       g2 = {},
+//       node,
+//       cls,
+//       c1,
+//       c2;
+
+//   // Grouping by class
+//   for (node in p1) {
+//     g1[p1[node]] = g1[p1[node]] || [];
+//     g1[p1[node]].push(node);
+//   }
+
+//   for (node in p2) {
+//     g2[p2[node]] = g2[p2[node]] || [];
+//     g2[p2[node]].push(node)
+//   }
+
+//   // Actual comparison, node by node
+//   for (node in p2) {
+//     c1 = g1[p1[node]];
+//     c2 = g2[p2[node]];
+
+//     if (c1 !== c2)
+//       return false;
+//   }
+
+//   return true;
+// }
+
 function parse(dataset, t) {
    var graph = new Graph({type: t}),
        n = dataset.nodes,
@@ -64,6 +95,7 @@ var clique3 = parse(require('./datasets/clique3.json'), TYPE.UNDIRECTED),
  */
 describe('graphology-communities-louvain', function() {
 
+  // Disabling test timeout
   this.timeout(0);
 
   it('should throw if given graph is invalid.', function() {
@@ -130,9 +162,8 @@ describe('graphology-communities-louvain', function() {
     var communities = louvain(clique3.graph);
 
     assert.closeTo(modularity(clique3.graph, {communities: communities}), 0.524, 0.001);
-
-    // TODO: why not compare the partitionning better?
     assert.strictEqual(distinctSize(communities), distinctSize(clique3.partitioning));
+    // assert(comparePartitions(clique3.partitioning, communities), 'Partitions are different.');
   });
 
   it('should handle heavy-sized complex graph (undirected, weighted, with self-loops) (500 nodes, 4302 links)', function() {
@@ -140,6 +171,7 @@ describe('graphology-communities-louvain', function() {
 
     assert.closeTo(modularity(complex500.graph, {communities: communities}), 0.407, 0.01);
     assert.strictEqual(distinctSize(communities), distinctSize(complex500.partitioning));
+    // assert(comparePartitions(complex500.partitioning, communities), 'Partitions are different.');
   });
 
  it('should handle heavy-sized undirected graph (500 nodes, 4813 links)', function() {
@@ -147,6 +179,7 @@ describe('graphology-communities-louvain', function() {
 
     assert.closeTo(modularity(undirected500.graph, {communities: communities}), 0.397, 0.01);
     assert.strictEqual(distinctSize(communities), distinctSize(undirected500.partitioning));
+    // assert(comparePartitions(undirected500.partitioning, communities), 'Partitions are different.');
   });
 
   it('should handle heavy-sized mixed graph (1000 nodes, 6907 links)', function() {
@@ -154,6 +187,7 @@ describe('graphology-communities-louvain', function() {
 
     assert.closeTo(modularity(mixed1000.graph, {communities: communities}), 0.354, 0.01);
     assert.strictEqual(distinctSize(communities), 8);
+    // assert(comparePartitions(mixed1000.partitioning, communities), 'Partitions are different.');
   });
 
   it('should handle heavy-sized undirected graph (1000 nodes, 9724 links)', function() {
@@ -161,6 +195,7 @@ describe('graphology-communities-louvain', function() {
 
     assert.closeTo(modularity(undirected1000.graph, {communities: communities}), 0.437, 0.01);
     assert.strictEqual(distinctSize(communities), distinctSize(undirected1000.partitioning));
+    // assert(comparePartitions(undirected1000.partitioning, communities), 'Partitions are different.');
   });
 
   it('should handle heavy-sized directed graph (1000 nodes, 10000 links)', function() {
@@ -168,5 +203,6 @@ describe('graphology-communities-louvain', function() {
 
     assert.closeTo(modularity(directed1000.graph, {communities: communities}), 0.433, 0.01);
     assert.strictEqual(distinctSize(communities), distinctSize(directed1000.partitioning));
+    // assert(comparePartitions(directed1000.partitioning, communities), 'Partitions are different.');
   });
 });
