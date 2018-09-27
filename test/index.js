@@ -113,7 +113,8 @@ describe('graphology-communities-louvain', function() {
 
   it('should throw if the given graph has no edges.', function() {
     var graph = new Graph();
-    graph.addNodesFrom([1, 2]);
+    graph.addNode(1);
+    graph.addNode(2);
 
     assert.throws(function() {
       louvain(graph);
