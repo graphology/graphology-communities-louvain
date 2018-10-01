@@ -85,16 +85,13 @@ function louvain(assign, graph, options) {
       nextCommunity,
       between,
       oldc, newc,
-      stack,
       visited;
 
   // Iterations variables
   var i, l1,
       j, l2,
-      k, l3,
       iterator,
       step,
-      keys,
       node, node2, edge, edge2, bounds,
       community, community2;
 
