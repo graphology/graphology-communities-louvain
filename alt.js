@@ -29,7 +29,8 @@
  * A flag is used to handle the first phase-1 iteration
  */
 var defaults = require('lodash/defaultsDeep'),
-    isGraph = require('graphology-utils/is-graph');
+    isGraph = require('graphology-utils/is-graph'),
+    typed = require('mnemonist/utils/typed-arrays');
 
 var DEFAULTS = {
   attributes: {
@@ -37,6 +38,86 @@ var DEFAULTS = {
     weight: 'weight'
   }
 };
+
+// TODO: support directed and mixed
+function vectorizeGraph(weightAttribute, graph) {
+  var nodes = graph.nodes();
+
+  // TODO: could shuffle here
+  var nodeIndices = {};
+
+  var neighborhoodSize = graph.directedSize + graph.undirectedSize * 2;
+
+  var NodePointerArray = typed.getPointerArray(graph.order);
+  var NeighborhoodPointerArray = typed.getSignedPointerArray(neighborhoodSize);
+
+  var communities = new NodePointerArray(graph.order);
+
+  var neighborhoods = new NeighborhoodPointerArray(neighborhoodSize);
+
+  var indegrees = new Uint32Array(graph.order),
+      outdegrees = new Uint32Array(graph.order);
+
+  var weights = new Float64Array(neighborhoodSize);
+
+  var M = 0;
+
+  var i, l, ii, ll, j, n, edges, e, weight;
+
+  // Node pass
+  for (i = 0, l = graph.order; i < l; i++) {
+    communities[i] = i;
+    nodeIndices[nodes[i]] = i;
+  }
+
+  // Neighborhoods pass
+  var flipflop = 1,
+      offset = 0;
+
+  for (i = 0, l = graph.order; i < l; i++) {
+    n = nodes[i];
+    edges = graph.edges(n);
+
+    for (ii = 0, ll = edges.length; ii < ll; ii++) {
+      e = edges[ii];
+
+      j = nodeIndices[graph.opposite(n, e)];
+
+      // Extracting weight
+      weight = graph.getEdgeAttribute(e, weightAttribute);
+
+      if (typeof weight !== 'number')
+        weight = 1;
+
+      weights[offset] = weight;
+      neighborhoods[offset++] = (j + 1) * flipflop;
+
+      // TODO: change for directed & mixed & self loops
+      // TODO: might need to change #.edges method and/or use the s > t trick
+      if (i < j) {
+        indegrees[i] += weight;
+        indegrees[j] += weight;
+
+        outdegrees[i] += weight;
+        outdegrees[j] += weight;
+
+        M += weight * 2;
+      }
+    }
+
+    flipflop = -flipflop;
+  }
+
+  return {
+    nodes: nodes,
+    communities: communities,
+    neighborhoods: neighborhoods,
+    indegrees: indegrees,
+    outdegrees: outdegrees,
+    weights: weights,
+    M: M
+  };
+}
 
 // TODO: resolution option
 // TODO: random walk + seeding
@@ -69,31 +150,10 @@ function louvain(assign, graph, options) {
   var weightAttribute = options.attributes.weight,
       communityAttribute = options.attributes.community;
 
-  var nodes = graph.nodes();
-
-  var belongings,
-      weights,
-      indegrees,
-      outdegrees,
-      neighbors,
-      neighborsOffsets,
-      neighborsLengths;
-
-  // Iteration variables
-  var i, l;
-
-  // Initializing vectors
-
-
-  // State
-  var moveMade = true,
-      enhancingPass = true;
-
-  // As long as modularity increases
-  while (enhancingPass) {
-
-    enhancingPass = false;
-  }
+  var vectors = vectorizeGraph(weightAttribute, graph);
+  // console.log(graph);
+  // console.log(vectors);
+  // console.log(graph.nodes().map(n => [n, graph.neighbors(n)]));
 
   return;
 }
