@@ -119,6 +119,7 @@ function vectorizeGraph(weightAttribute, graph) {
   };
 }
 
+// TODO: weighted option
 // TODO: resolution option
 // TODO: random walk + seeding
 // TODO: rewrite comment on altered set heuristics
