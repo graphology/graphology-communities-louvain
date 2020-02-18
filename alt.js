@@ -51,7 +51,7 @@ function vectorizeGraph(weightAttribute, graph) {
   var NodePointerArray = typed.getPointerArray(graph.order);
   var NeighborhoodPointerArray = typed.getSignedPointerArray(neighborhoodSize);
 
-  var communities = new NodePointerArray(graph.order);
+  var belongings = new NodePointerArray(graph.order);
 
   var neighborhoods = new NeighborhoodPointerArray(neighborhoodSize);
 
@@ -66,7 +66,7 @@ function vectorizeGraph(weightAttribute, graph) {
 
   // Node pass
   for (i = 0, l = graph.order; i < l; i++) {
-    communities[i] = i;
+    belongings[i] = i;
     nodeIndices[nodes[i]] = i;
   }
 
@@ -110,7 +110,7 @@ function vectorizeGraph(weightAttribute, graph) {
 
   return {
     nodes: nodes,
-    communities: communities,
+    belongings: belongings,
     neighborhoods: neighborhoods,
     indegrees: indegrees,
     outdegrees: outdegrees,
