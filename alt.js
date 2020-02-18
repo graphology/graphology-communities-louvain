@@ -94,15 +94,10 @@ function vectorizeGraph(weightAttribute, graph) {
 
       // TODO: change for directed & mixed & self loops
       // TODO: might need to change #.edges method and/or use the s > t trick
-      if (i < j) {
-        indegrees[i] += weight;
-        indegrees[j] += weight;
+      indegrees[j] += weight;
+      outdegrees[i] += weight;
 
-        outdegrees[i] += weight;
-        outdegrees[j] += weight;
-
-        M += weight * 2;
-      }
+      M += weight;
     }
 
     flipflop = -flipflop;
@@ -152,9 +147,9 @@ function louvain(assign, graph, options) {
       communityAttribute = options.attributes.community;
 
   var vectors = vectorizeGraph(weightAttribute, graph);
-  // console.log(graph);
-  // console.log(vectors);
-  // console.log(graph.nodes().map(n => [n, graph.neighbors(n)]));
+  console.log(graph);
+  console.log(vectors);
+  console.log(graph.nodes().map(n => [n, graph.neighbors(n)]));
 
   return;
 }
