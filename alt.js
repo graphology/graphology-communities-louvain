@@ -30,6 +30,7 @@
  */
 var defaults = require('lodash/defaultsDeep'),
     isGraph = require('graphology-utils/is-graph'),
+    inferType = require('graphology-utils/infer-type'),
     typed = require('mnemonist/utils/typed-arrays');
 
 var DEFAULTS = {
@@ -40,7 +41,7 @@ var DEFAULTS = {
 };
 
 // TODO: support directed and mixed
-function vectorizeGraph(weightAttribute, graph) {
+function vectorizeGraph(weightAttribute, type, graph) {
   var nodes = graph.nodes();
 
   // TODO: could shuffle here
@@ -143,13 +144,15 @@ function louvain(assign, graph, options) {
   // Attributes name
   options = defaults({}, options, DEFAULTS);
 
+  var trueType = inferType(graph);
+
   var weightAttribute = options.attributes.weight,
       communityAttribute = options.attributes.community;
 
-  var vectors = vectorizeGraph(weightAttribute, graph);
-  console.log(graph);
-  console.log(vectors);
-  console.log(graph.nodes().map(n => [n, graph.neighbors(n)]));
+  var vectors = vectorizeGraph(weightAttribute, trueType, graph);
+  // console.log(graph);
+  // console.log(vectors);
+  // console.log(graph.nodes().map(n => [n, graph.neighbors(n)]));
 
   return;
 }
