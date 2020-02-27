@@ -237,7 +237,7 @@ function louvain(assign, graph, options) {
      * -------------------------------------------------------------------------------------
      */
     if (enhancingPass) {
-      bgraph = pgraph.emptyCopy();
+      bgraph = pgraph.nullCopy();
       bgraph.upgradeToMixed();
 
       // Adding the nodes
