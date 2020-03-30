@@ -45,6 +45,17 @@ var DEFAULTS = {
   weighted: true
 };
 
+function addWeightToCommunity(map, community, weight) {
+  var currentWeight = map.get(community);
+
+  if (typeof currentWeight === 'undefined')
+    currentWeight = 0;
+
+  currentWeight += weight;
+
+  map.set(community, currentWeight);
+}
+
 function undirectedLouvain(detailed, graph, options) {
   var index = new UndirectedLouvainIndex(graph, options);
 
@@ -59,29 +70,36 @@ function undirectedLouvain(detailed, graph, options) {
   // Traversal
   var start,
       end,
-      node,
       weight,
+      ci,
       i,
       j,
       l;
 
   // Metrics
   var degree,
-      currentCommunityDegree,
       targetCommunityDegree;
 
   // Moves
   var bestCommunity,
-      bestDelta;
+      bestCommunityDegree,
+      bestDelta,
+      shouldMove,
+      delta;
 
   while (moveWasMade) {
     l = index.C;
 
+    moveWasMade = false;
+
     while (localMoveWasMade) {
+
+      localMoveWasMade = false;
 
       // Traversal of the graph
       for (i = 0; i < l; i++) {
 
+        degree = 0;
         communities.clear();
 
         currentCommunity = index.belongings[i];
@@ -89,6 +107,7 @@ function undirectedLouvain(detailed, graph, options) {
         start = index.starts[i];
         end = index.starts[i + 1];
 
+        // Traversing neighbors
         for (; start < end; start++) {
           j = index.neighborhood[start];
           weight = index.weights[start];
@@ -97,15 +116,73 @@ function undirectedLouvain(detailed, graph, options) {
 
           // Incrementing metrics
           degree += weight;
+          addWeightToCommunity(communities, targetCommunity, weight);
+        }
 
-          if (currentCommunity === targetCommunity)
-            currentCommunityDegree += weight;
+        // Finding best community to move to
+        bestDelta = 0;
+        bestCommunity = currentCommunity;
+        bestCommunityDegree = 0;
+
+        for (ci = 0; ci < communities.size; ci++) {
+          targetCommunity = communities.dense[ci];
+          targetCommunityDegree = communities.vals[ci];
+
+          if (targetCommunity === currentCommunity) {
+            delta = index.deltaWithOwnCommunity(
+              i,
+              degree,
+              targetCommunityDegree,
+              targetCommunity
+            );
+          }
+          else {
+            delta = index.delta(
+              i,
+              degree,
+              targetCommunityDegree,
+              targetCommunity
+            );
+          }
+
+          // NOTE: tie breaker here for better determinism
+          shouldMove = delta === bestDelta ?
+            targetCommunity > bestCommunity :
+            delta > bestDelta;
+
+          if (shouldMove) {
+            bestDelta = delta;
+            bestCommunity = targetCommunity;
+            bestCommunityDegree = targetCommunityDegree;
+          }
+        }
+
+        // Should we move the node into a different community?
+        if (
+          delta > 0 &&
+          bestCommunity !== currentCommunity
+        ) {
+          localMoveWasMade = true;
+          moveWasMade = true;
+
+          index.move(
+            i,
+            degree,
+            communities.get(currentCommunity) || 0,
+            targetCommunityDegree,
+            targetCommunity
+          );
         }
       }
     }
+
+    // We continue working on the induced graph
+    index.zoomOut();
   }
 
-  return {};
+  return {
+    index: index
+  };
 }
 
 function directedLouvain(detailed, graph, options) {
@@ -148,7 +225,7 @@ function louvain(assign, detailed, graph, options) {
 
   var results = fn(detailed, graph, options);
 
-  console.log(results);
+  return results.index.collect();
 }
 
 /**

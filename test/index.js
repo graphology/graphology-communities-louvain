@@ -90,6 +90,22 @@ describe('graphology-communities-louvain', function() {
     });
   });
 
+  it.skip('should work on a simple 3 clique graph.', function() {
+    var communities = louvain(clique3.graph);
+
+    assert.strictEqual(communities[0], communities[1]);
+    assert.strictEqual(communities[1], communities[2]);
+    assert.strictEqual(communities[2], communities[3]);
+
+    assert.strictEqual(communities[4], communities[5]);
+    assert.strictEqual(communities[5], communities[6]);
+    assert.strictEqual(communities[6], communities[7]);
+
+    assert.strictEqual(communities[8], communities[9]);
+    assert.strictEqual(communities[9], communities[10]);
+    assert.strictEqual(communities[10], communities[11]);
+  });
+
   it.skip('should assign the new community on `community` attribute by default', function() {
     var attr = 'community',
         graph = clique3.graph;
