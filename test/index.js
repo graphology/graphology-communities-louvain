@@ -93,7 +93,7 @@ var clique3 = parse(require('./datasets/clique3.json'), TYPE.UNDIRECTED),
 /**
  * Actual unit tests.
  */
-describe('graphology-communities-louvain', function() {
+describe.skip('graphology-communities-louvain', function() {
 
   // High timeout
   this.timeout(30 * 1000);
