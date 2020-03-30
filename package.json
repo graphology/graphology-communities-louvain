@@ -19,6 +19,10 @@
     "graphology",
     "louvain"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/graphology/graphology-communities-louvain.git"
+  },
   "contributors": [
     {
       "name": "Guillaume Plique",
@@ -30,6 +34,10 @@
     }
   ],
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/graphology/graphology-communities-louvain/issues"
+  },
+  "homepage": "https://github.com/graphology/graphology-communities-louvain#readme",
   "devDependencies": {
     "@yomguithereal/eslint-config": "^4.0.0",
     "chai": "^4.2.0",
@@ -39,11 +47,11 @@
     "mocha": "^7.1.1"
   },
   "dependencies": {
-    "graphology-indices": "^0.3.0",
+    "graphology-indices": "^0.4.0",
     "graphology-types": "^0.16.0",
     "graphology-utils": "^1.7.0",
     "lodash": "^4.17.15",
-    "mnemonist": "^0.34.0"
+    "mnemonist": "^0.35.0"
   },
   "eslintConfig": {
     "extends": "@yomguithereal/eslint-config",

@@ -31,7 +31,7 @@
 var defaults = require('lodash/defaultsDeep'),
     isGraph = require('graphology-utils/is-graph'),
     inferType = require('graphology-utils/infer-type'),
-    SparseSet = require('mnemonist/sparse-set');
+    SparseMap = require('mnemonist/sparse-map');
 
 var indices = require('graphology-indices/neighborhood/louvain');
 
@@ -54,7 +54,7 @@ function undirectedLouvain(detailed, graph, options) {
 
   // Communities
   var currentCommunity, targetCommunity;
-  var communities = new SparseSet(index.C);
+  var communities = new SparseMap(index.C);
 
   // Traversal
   var start,
