@@ -4,6 +4,7 @@
   "description": "Louvain community detection for graphology.",
   "main": "index.js",
   "files": [
+    "*.d.ts",
     "index.js"
   ],
   "scripts": {
@@ -38,9 +39,9 @@
     "mocha": "^7.1.1"
   },
   "dependencies": {
+    "graphology-types": "^0.16.0",
     "graphology-utils": "^1.7.0",
-    "lodash": "^4.17.15",
-    "mnemonist": "^0.34.0"
+    "lodash": "^4.17.15"
   },
   "eslintConfig": {
     "extends": "@yomguithereal/eslint-config",
