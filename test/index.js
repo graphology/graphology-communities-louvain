@@ -183,7 +183,7 @@ describe('graphology-communities-louvain', function() {
     // assert(comparePartitions(undirected500.partitioning, communities), 'Partitions are different.');
   });
 
-  it('should handle heavy-sized mixed graph (1000 nodes, 6907 links)', function() {
+  it.skip('should handle heavy-sized mixed graph (1000 nodes, 6907 links)', function() {
     var communities = louvain(mixed1000.graph);
 
     assert.closeTo(modularity(mixed1000.graph, {communities: communities}), 0.354, 0.01);

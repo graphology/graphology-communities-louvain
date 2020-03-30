@@ -33,14 +33,14 @@
     "@yomguithereal/eslint-config": "^4.0.0",
     "chai": "^4.2.0",
     "eslint": "^6.8.0",
-    "graphology": "^0.16.0",
-    "graphology-metrics": "1.6.1",
-    "mocha": "^7.1.0"
+    "graphology": "^0.16.1",
+    "graphology-metrics": "1.10.1",
+    "mocha": "^7.1.1"
   },
   "dependencies": {
     "graphology-utils": "^1.7.0",
     "lodash": "^4.17.15",
-    "mnemonist": "^0.32.0"
+    "mnemonist": "^0.34.0"
   },
   "eslintConfig": {
     "extends": "@yomguithereal/eslint-config",
