@@ -30,7 +30,12 @@
  */
 var defaults = require('lodash/defaultsDeep'),
     isGraph = require('graphology-utils/is-graph'),
-    inferType = require('graphology-utils/infer-type');
+    inferType = require('graphology-utils/infer-type'),
+    SparseSet = require('mnemonist/sparse-set');
+
+var indices = require('graphology-indices/neighborhood/louvain');
+
+var UndirectedLouvainIndex = indices.UndirectedLouvainIndex;
 
 var DEFAULTS = {
   attributes: {
@@ -41,7 +46,66 @@ var DEFAULTS = {
 };
 
 function undirectedLouvain(detailed, graph, options) {
+  var index = new UndirectedLouvainIndex(graph, options);
 
+  // State variables
+  var moveWasMade = true,
+      localMoveWasMade = true;
+
+  // Communities
+  var currentCommunity, targetCommunity;
+  var communities = new SparseSet(index.C);
+
+  // Traversal
+  var start,
+      end,
+      node,
+      weight,
+      i,
+      j,
+      l;
+
+  // Metrics
+  var degree,
+      currentCommunityDegree,
+      targetCommunityDegree;
+
+  // Moves
+  var bestCommunity,
+      bestDelta;
+
+  while (moveWasMade) {
+    l = index.C;
+
+    while (localMoveWasMade) {
+
+      // Traversal of the graph
+      for (i = 0; i < l; i++) {
+
+        communities.clear();
+
+        currentCommunity = index.belongings[i];
+
+        start = index.starts[i];
+        end = index.starts[i + 1];
+
+        for (; start < end; start++) {
+          j = index.neighborhood[start];
+          weight = index.weights[start];
+
+          targetCommunity = index.belongings[j];
+
+          // Incrementing metrics
+          degree += weight;
+
+          if (currentCommunity === targetCommunity)
+            currentCommunityDegree += weight;
+        }
+      }
+    }
+  }
+
+  return {};
 }
 
 function directedLouvain(detailed, graph, options) {
