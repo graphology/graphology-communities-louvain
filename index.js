@@ -29,7 +29,8 @@
  * https://arxiv.org/abs/0812.1770
  */
 var defaults = require('lodash/defaultsDeep'),
-    isGraph = require('graphology-utils/is-graph');
+    isGraph = require('graphology-utils/is-graph'),
+    inferType = require('graphology-utils/infer-type');
 
 var DEFAULTS = {
   attributes: {
@@ -38,6 +39,14 @@ var DEFAULTS = {
   },
   weighted: true
 };
+
+function undirectedLouvain(detailed, graph, options) {
+
+}
+
+function directedLouvain(detailed, graph, options) {
+  throw new Error('graphology-communities-louvain: not implemented');
+}
 
 /**
  * Function returning the communities mapping of the graph.
@@ -57,13 +66,25 @@ function louvain(assign, detailed, graph, options) {
     throw new Error('graphology-communities-louvain: the given graph is not a valid graphology instance.');
 
   if (graph.multi)
-    throw new Error('graphology-communities-louvain: multi graphs are not handled.');
+    throw new Error('graphology-communities-louvain: cannot run the algorithm on a multi graph. Cast it to a simple one before (graphology-operators/to-simple).');
 
+  // TODO: yes we can...
   if (!graph.size)
-    throw new Error('graphology-communities-louvain: the graph has no edges.');
+    throw new Error('graphology-communities-louvain: cannor run the algorithm on an empty graph.');
+
+  var type = inferType(graph);
+
+  if (type === 'mixed')
+    throw new Error('graphology-communities-louvain: cannor run the algorithm on a true mixed graph.');
 
   // Attributes name
   options = defaults({}, options, DEFAULTS);
+
+  var fn = type === 'undirected' ? undirectedLouvain : directedLouvain;
+
+  var results = fn(detailed, graph, options);
+
+  console.log(results);
 }
 
 /**
