@@ -163,11 +163,10 @@ describe('graphology-communities-louvain', function() {
     assert.strictEqual(distinctSize(communities), distinctSize(clique3.partitioning));
   });
 
-  it.skip('should handle heavy-sized complex graph (undirected, weighted, with self-loops) (500 nodes, 4302 links)', function() {
+  it.skip('should handle heavy-sized complex graph (undirected, with self-loops) (500 nodes, 4302 links)', function() {
     var result = louvain.detailed(complex500.graph);
-    // dumpToImage(complex500.graph, result.communities);
-    // console.log(result);
-
+    // var {communities, ...meta} = result;
+    // console.log(meta)
     // TODO: what about self loops...
 
     // var Q = modularity(complex500.graph, {communities: result.communities});

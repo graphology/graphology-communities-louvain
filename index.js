@@ -42,7 +42,7 @@ var DEFAULTS = {
     community: 'community',
     weight: 'weight'
   },
-  weighted: true
+  weighted: false
 };
 
 function addWeightToCommunity(map, community, weight) {
@@ -234,25 +234,31 @@ function louvain(assign, detailed, graph, options) {
 
   var results = fn(detailed, graph, options);
 
+  var index = results.index;
+
   // Standard output
   if (!detailed) {
     if (assign) {
-      results.index.assign(options.attributes.community);
+      index.assign(options.attributes.community);
       return;
     }
 
-    return results.index.collect();
+    return index.collect();
   }
 
   // Detailed output
-  var output = {modularity: results.index.modularity()};
+  var output = {
+    level: index.level,
+    modularity: index.modularity(),
+    count: index.C
+  };
 
   if (assign) {
-    results.index.assign(options.attributes.community);
+    index.assign(options.attributes.community);
     return output;
   }
 
-  output.communities = results.index.collect();
+  output.communities = index.collect();
 
   return output;
 }
