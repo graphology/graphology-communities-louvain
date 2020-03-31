@@ -75,7 +75,6 @@ function dumpToImage(graph, communities) {
 var clique3 = parse(require('./datasets/clique3.json'), TYPE.UNDIRECTED),
     complex500 = parse(require('./datasets/complex500.json'), TYPE.UNDIRECTED),
     undirected500 = parse(require('./datasets/undirected500.json'), TYPE.UNDIRECTED),
-    mixed1000 = parse(require('./datasets/mixed1000.json'), TYPE.MIXED),
     undirected1000 = parse(require('./datasets/undirected1000.json'), TYPE.UNDIRECTED),
     directed1000 = parse(require('./datasets/directed1000.json'), TYPE.DIRECTED);
 
@@ -152,14 +151,6 @@ describe('graphology-communities-louvain', function() {
     assert.closeTo(modularity(undirected500.graph, {communities: communities}), 0.397, 0.01);
     assert.strictEqual(distinctSize(communities), distinctSize(undirected500.partitioning));
     // assert(comparePartitions(undirected500.partitioning, communities), 'Partitions are different.');
-  });
-
-  it.skip('should handle heavy-sized mixed graph (1000 nodes, 6907 links)', function() {
-    var communities = louvain(mixed1000.graph);
-
-    assert.closeTo(modularity(mixed1000.graph, {communities: communities}), 0.354, 0.01);
-    assert.strictEqual(distinctSize(communities), 8);
-    // assert(comparePartitions(mixed1000.partitioning, communities), 'Partitions are different.');
   });
 
   it.skip('should handle heavy-sized undirected graph (1000 nodes, 9724 links)', function() {
