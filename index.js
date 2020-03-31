@@ -188,9 +188,11 @@ function undirectedLouvain(detailed, graph, options) {
     index.zoomOut();
   }
 
-  return {
+  var results = {
     index: index
   };
+
+  return results;
 }
 
 function directedLouvain(detailed, graph, options) {
@@ -233,12 +235,27 @@ function louvain(assign, detailed, graph, options) {
 
   var results = fn(detailed, graph, options);
 
-  if (assign) {
-    results.index.assign(options.attributes.community);
-    return;
+  // Standard output
+  if (!detailed) {
+    if (assign) {
+      results.index.assign(options.attributes.community);
+      return;
+    }
+
+    return results.index.collect();
   }
 
-  return results.index.collect();
+  // Detailed output
+  var output = {modularity: results.index.modularity()};
+
+  if (assign) {
+    results.index.assign(options.attributes.community);
+    return output;
+  }
+
+  output.communities = results.index.collect();
+
+  return output;
 }
 
 /**
@@ -246,5 +263,6 @@ function louvain(assign, detailed, graph, options) {
  */
 var fn = louvain.bind(null, false, false);
 fn.assign = louvain.bind(null, true, false);
+fn.detailed = louvain.bind(null, false, true);
 
 module.exports = fn;
