@@ -5,6 +5,7 @@
 var assert = require('chai').assert,
     Graph = require('graphology'),
     modularity = require('graphology-metrics/modularity'),
+    // emptyGraph = require('graphology-generators/classic/empty'),
     netToImg = require('net-to-img'),
     louvain = require('../');
 
@@ -18,7 +19,12 @@ var TYPE = {
 };
 
 function distinctSize(obj) {
-  return Object.keys(obj).length;
+  var indexer = new Set();
+
+  for (var element in obj)
+    indexer.add(obj[element]);
+
+  return indexer.size;
 }
 
 function parse(dataset, t) {
@@ -108,6 +114,33 @@ describe('graphology-communities-louvain', function() {
     });
   });
 
+  // it('should return singleton communities on an empty graph.', function() {
+  //   var graph = emptyGraph(Graph.UndirectedGraph, 10);
+  //   var result = louvain.detailed(graph);
+  //   console.log(result);
+  //   dumpToImage(graph, result.communities);
+  // });
+
+  it('should work with multiple connected components.', function() {
+    var graph = clique3.graph.copy();
+    graph.dropNode(0);
+    graph.dropNode(8);
+    graph.dropNode(4);
+
+    var communities = louvain(graph);
+
+    assert.strictEqual(communities[1], communities[3]);
+    assert.strictEqual(communities[2], communities[3]);
+
+    assert.strictEqual(communities[5], communities[6]);
+    assert.strictEqual(communities[6], communities[7]);
+
+    assert.strictEqual(communities[9], communities[10]);
+    assert.strictEqual(communities[10], communities[11]);
+
+    assert.strictEqual(distinctSize(communities), 3);
+  });
+
   it('should work on a simple 3 clique graph.', function() {
     var communities = louvain(clique3.graph);
 
@@ -131,7 +164,7 @@ describe('graphology-communities-louvain', function() {
     assert.strictEqual(distinctSize(communities), distinctSize(clique3.partitioning));
   });
 
-  it('should handle heavy-sized complex graph (undirected, weighted, with self-loops) (500 nodes, 4302 links)', function() {
+  it.skip('should handle heavy-sized complex graph (undirected, weighted, with self-loops) (500 nodes, 4302 links)', function() {
     var result = louvain.detailed(complex500.graph);
     // dumpToImage(complex500.graph, result.communities);
     // console.log(result);

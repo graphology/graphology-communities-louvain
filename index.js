@@ -219,10 +219,6 @@ function louvain(assign, detailed, graph, options) {
   if (graph.multi)
     throw new Error('graphology-communities-louvain: cannot run the algorithm on a multi graph. Cast it to a simple one before (graphology-operators/to-simple).');
 
-  // TODO: yes we can...
-  if (!graph.size)
-    throw new Error('graphology-communities-louvain: cannor run the algorithm on an empty graph.');
-
   var type = inferType(graph);
 
   if (type === 'mixed')
