@@ -5,6 +5,7 @@
 var assert = require('chai').assert,
     Graph = require('graphology'),
     modularity = require('graphology-metrics/modularity'),
+    netToImg = require('net-to-img'),
     louvain = require('../');
 
 /**
@@ -49,6 +50,20 @@ function parse(dataset, t) {
   return {graph: graph, partitioning: partitioning};
 }
 
+/* eslint-disable */
+function dumpToImage(graph) {
+  netToImg({
+    graph: graph,
+    destPath: './test/dump.png',
+    options: {
+      colorize: 'community',
+      width: 512,
+      height: 512
+    }
+  });
+}
+/* eslint-enable */
+
 /**
  * Datasets.
  */
@@ -90,7 +105,7 @@ describe('graphology-communities-louvain', function() {
     });
   });
 
-  it.skip('should work on a simple 3 clique graph.', function() {
+  it('should work on a simple 3 clique graph.', function() {
     var communities = louvain(clique3.graph);
 
     assert.strictEqual(communities[0], communities[1]);

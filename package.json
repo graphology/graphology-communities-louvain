@@ -44,7 +44,8 @@
     "eslint": "^6.8.0",
     "graphology": "^0.16.1",
     "graphology-metrics": "1.10.1",
-    "mocha": "^7.1.1"
+    "mocha": "^7.1.1",
+    "net-to-img": "^0.4.0"
   },
   "dependencies": {
     "graphology-indices": "^0.4.0",

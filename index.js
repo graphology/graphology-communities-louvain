@@ -169,8 +169,8 @@ function undirectedLouvain(detailed, graph, options) {
             i,
             degree,
             communities.get(currentCommunity) || 0,
-            targetCommunityDegree,
-            targetCommunity
+            bestCommunityDegree,
+            bestCommunity
           );
         }
       }
@@ -224,6 +224,11 @@ function louvain(assign, detailed, graph, options) {
   var fn = type === 'undirected' ? undirectedLouvain : directedLouvain;
 
   var results = fn(detailed, graph, options);
+
+  if (assign) {
+    results.index.assign(options.attributes.community);
+    return;
+  }
 
   return results.index.collect();
 }
