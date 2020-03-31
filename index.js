@@ -146,6 +146,7 @@ function undirectedLouvain(detailed, graph, options) {
           }
 
           // NOTE: tie breaker here for better determinism
+          // TODO: if tie, should go to current then tiebreaker
           shouldMove = delta === bestDelta ?
             targetCommunity > bestCommunity :
             delta > bestDelta;
