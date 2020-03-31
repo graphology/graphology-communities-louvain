@@ -166,6 +166,7 @@ describe('graphology-communities-louvain', function() {
   it.skip('should handle heavy-sized complex graph (undirected, with self-loops) (500 nodes, 4302 links)', function() {
     var result = louvain.detailed(complex500.graph);
     // var {communities, ...meta} = result;
+    // dumpToImage(complex500.graph, communities);
     // console.log(meta)
     // TODO: what about self loops...
 

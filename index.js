@@ -91,6 +91,7 @@ function undirectedLouvain(detailed, graph, options) {
     l = index.C;
 
     moveWasMade = false;
+    localMoveWasMade = true;
 
     while (localMoveWasMade) {
 
@@ -173,7 +174,6 @@ function undirectedLouvain(detailed, graph, options) {
           bestCommunity !== currentCommunity
         ) {
           localMoveWasMade = true;
-          moveWasMade = true;
 
           index.move(
             i,
@@ -184,10 +184,13 @@ function undirectedLouvain(detailed, graph, options) {
           );
         }
       }
+
+      moveWasMade = localMoveWasMade || moveWasMade;
     }
 
     // We continue working on the induced graph
-    index.zoomOut();
+    if (moveWasMade)
+      index.zoomOut();
   }
 
   var results = {
