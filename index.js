@@ -149,13 +149,15 @@ function undirectedLouvain(detailed, graph, options) {
           shouldMove = false;
 
           if (delta === bestDelta) {
-            shouldMove = (
-              bestCommunity !== currentCommunity &&
-              targetCommunity > bestCommunity
-            );
+            if (bestCommunity === currentCommunity) {
+              shouldMove = false;
+            }
+            else {
+              shouldMove = targetCommunity > bestCommunity;
+            }
           }
-          else {
-            shouldMove = delta > bestDelta;
+          else if (delta > bestDelta) {
+            shouldMove = true;
           }
 
           if (shouldMove) {
