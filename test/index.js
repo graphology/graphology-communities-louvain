@@ -50,8 +50,18 @@ function parse(dataset, t) {
   return {graph: graph, partitioning: partitioning};
 }
 
+function assignNodeAttributes(graph, prop, map) {
+  for (var node in map)
+    graph.setNodeAttribute(node, prop, map[node]);
+}
+
 /* eslint-disable */
-function dumpToImage(graph) {
+function dumpToImage(graph, communities) {
+  if (communities) {
+    graph = graph.copy();
+    assignNodeAttributes(graph, 'community', communities);
+  }
+
   netToImg({
     graph: graph,
     destPath: './test/dump.png',
