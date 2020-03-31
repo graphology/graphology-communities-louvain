@@ -5,7 +5,7 @@
 var assert = require('chai').assert,
     Graph = require('graphology'),
     modularity = require('graphology-metrics/modularity'),
-    // emptyGraph = require('graphology-generators/classic/empty'),
+    emptyGraph = require('graphology-generators/classic/empty'),
     netToImg = require('net-to-img'),
     louvain = require('../');
 
@@ -112,14 +112,13 @@ describe('graphology-communities-louvain', function() {
 
       louvain(graph);
     });
-  });
 
-  // it('should return singleton communities on an empty graph.', function() {
-  //   var graph = emptyGraph(Graph.UndirectedGraph, 10);
-  //   var result = louvain.detailed(graph);
-  //   console.log(result);
-  //   dumpToImage(graph, result.communities);
-  // });
+    // Empty graph
+    assert.throws(function() {
+      var graph = emptyGraph(Graph.UndirectedGraph, 10);
+      louvain(graph);
+    }, /empty/);
+  });
 
   it('should work with multiple connected components.', function() {
     var graph = clique3.graph.copy();
