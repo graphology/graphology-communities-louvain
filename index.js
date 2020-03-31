@@ -120,7 +120,7 @@ function undirectedLouvain(detailed, graph, options) {
         }
 
         // Finding best community to move to
-        bestDelta = 0;
+        bestDelta = -Infinity;
         bestCommunity = currentCommunity;
         bestCommunityDegree = 0;
 
@@ -146,10 +146,17 @@ function undirectedLouvain(detailed, graph, options) {
           }
 
           // NOTE: tie breaker here for better determinism
-          // TODO: if tie, should go to current then tiebreaker
-          shouldMove = delta === bestDelta ?
-            targetCommunity > bestCommunity :
-            delta > bestDelta;
+          shouldMove = false;
+
+          if (delta === bestDelta) {
+            shouldMove = (
+              bestCommunity !== currentCommunity &&
+              targetCommunity > bestCommunity
+            );
+          }
+          else {
+            shouldMove = delta > bestDelta;
+          }
 
           if (shouldMove) {
             bestDelta = delta;
