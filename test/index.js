@@ -174,18 +174,16 @@ describe('graphology-communities-louvain', function() {
   });
 
   it.skip('should handle heavy-sized undirected graph (1000 nodes, 9724 links)', function() {
-    var communities = louvain(undirected1000.graph);
-
-    assert.closeTo(modularity(undirected1000.graph, {communities: communities}), 0.437, 0.01);
-    assert.strictEqual(distinctSize(communities), distinctSize(undirected1000.partitioning));
-    // assert(comparePartitions(undirected1000.partitioning, communities), 'Partitions are different.');
+    var result = louvain.detailed(undirected1000.graph);
+    // console.log(result.modularity, result.level, result.count);
+    // dumpToImage(undirected1000.graph, result.communities);
+    assert.strictEqual(distinctSize(result.communities), distinctSize(undirected1000.partitioning));
   });
 
   it.skip('should handle heavy-sized directed graph (1000 nodes, 10000 links)', function() {
-    var communities = louvain(directed1000.graph);
-
-    assert.closeTo(modularity(directed1000.graph, {communities: communities}), 0.433, 0.01);
-    assert.strictEqual(distinctSize(communities), distinctSize(directed1000.partitioning));
-    // assert(comparePartitions(directed1000.partitioning, communities), 'Partitions are different.');
+    var result = louvain.detailed(directed1000.graph);
+    // console.log(result.modularity, result.level, result.count);
+    // dumpToImage(directed1000.graph, result.communities);
+    assert.strictEqual(distinctSize(result.communities), distinctSize(directed1000.partitioning));
   });
 });
