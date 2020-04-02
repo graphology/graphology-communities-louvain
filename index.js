@@ -89,7 +89,10 @@ function undirectedLouvain(detailed, graph, options) {
       delta;
 
   // Details
-  var deltaComputations = 0;
+  var deltaComputations = 0,
+      moves = [],
+      localMoves,
+      currentMoves;
 
   while (moveWasMade) {
     l = index.C;
@@ -97,9 +100,15 @@ function undirectedLouvain(detailed, graph, options) {
     moveWasMade = false;
     localMoveWasMade = true;
 
+    if (detailed) {
+      localMoves = [];
+      moves.push(localMoves);
+    }
+
     while (localMoveWasMade) {
 
       localMoveWasMade = false;
+      currentMoves = 0;
 
       // Traversal of the graph
       for (i = 0; i < l; i++) {
@@ -180,6 +189,7 @@ function undirectedLouvain(detailed, graph, options) {
           bestCommunity !== currentCommunity
         ) {
           localMoveWasMade = true;
+          currentMoves++;
 
           index.move(
             i,
@@ -191,6 +201,9 @@ function undirectedLouvain(detailed, graph, options) {
         }
       }
 
+      if (detailed)
+        localMoves.push(currentMoves);
+
       moveWasMade = localMoveWasMade || moveWasMade;
     }
 
@@ -201,7 +214,8 @@ function undirectedLouvain(detailed, graph, options) {
 
   var results = {
     index: index,
-    deltaComputations: deltaComputations
+    deltaComputations: deltaComputations,
+    moves: moves
   };
 
   return results;
@@ -263,7 +277,8 @@ function louvain(assign, detailed, graph, options) {
     level: index.level,
     modularity: index.modularity(),
     count: index.C,
-    deltaComputations: results.deltaComputations
+    deltaComputations: results.deltaComputations,
+    moves: results.moves
   };
 
   if (assign) {

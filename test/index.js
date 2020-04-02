@@ -80,6 +80,7 @@ function printReport(result) {
   console.log('Level =', result.level);
   console.log('Communities =', result.count);
   console.log('Delta Computations =', result.deltaComputations);
+  console.log('Moves', result.moves);
 }
 /* eslint-enable */
 
