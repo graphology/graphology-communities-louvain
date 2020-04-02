@@ -42,6 +42,7 @@ var DEFAULTS = {
     community: 'community',
     weight: 'weight'
   },
+  deltaComputation: 'original',
   weighted: false
 };
 
@@ -56,8 +57,81 @@ function addWeightToCommunity(map, community, weight) {
   map.set(community, currentWeight);
 }
 
+var UNDIRECTED_DELTAS = {
+  original: function(
+    index,
+    i,
+    degree,
+    currentCommunity,
+    targetCommunityDegree,
+    targetCommunity
+  ) {
+    if (targetCommunity === currentCommunity) {
+      return index.deltaWithOwnCommunity(
+        i,
+        degree,
+        targetCommunityDegree,
+        targetCommunity
+      );
+    }
+
+    return index.delta(
+      i,
+      degree,
+      targetCommunityDegree,
+      targetCommunity
+    );
+  },
+  fast: function(
+    index,
+    i,
+    degree,
+    currentCommunity,
+    targetCommunityDegree,
+    targetCommunity
+  ) {
+    if (targetCommunity === currentCommunity) {
+      return index.fastDeltaWithOwnCommunity(
+        i,
+        degree,
+        targetCommunityDegree,
+        targetCommunity
+      );
+    }
+
+    return index.fastDelta(
+      i,
+      degree,
+      targetCommunityDegree,
+      targetCommunity
+    );
+  },
+  true: function(
+    index,
+    i,
+    degree,
+    currentCommunity,
+    targetCommunityDegree,
+    targetCommunity,
+    communities
+  ) {
+    if (targetCommunity === currentCommunity)
+      return 0;
+
+    return index.trueDelta(
+      i,
+      degree,
+      communities.get(currentCommunity) || 0,
+      targetCommunityDegree,
+      targetCommunity
+    );
+  }
+};
+
 function undirectedLouvain(detailed, graph, options) {
   var index = new UndirectedLouvainIndex(graph, options);
+
+  var deltaComputation = UNDIRECTED_DELTAS[options.deltaComputation];
 
   // State variables
   var moveWasMade = true,
@@ -141,22 +215,15 @@ function undirectedLouvain(detailed, graph, options) {
 
           deltaComputations++;
 
-          if (targetCommunity === currentCommunity) {
-            delta = index.deltaWithOwnCommunity(
-              i,
-              degree,
-              targetCommunityDegree,
-              targetCommunity
-            );
-          }
-          else {
-            delta = index.delta(
-              i,
-              degree,
-              targetCommunityDegree,
-              targetCommunity
-            );
-          }
+          delta = deltaComputation(
+            index,
+            i,
+            degree,
+            currentCommunity,
+            targetCommunityDegree,
+            targetCommunity,
+            communities
+          );
 
           // NOTE: tie breaker here for better determinism
           deltaIsBetter = false;

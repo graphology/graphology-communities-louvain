@@ -5,6 +5,7 @@ export type LouvainOptions = {
     community: 'community',
     weight: 'weight'
   },
+  deltaComputation: 'original' | 'true' | 'fast',
   weighted: boolean
 };
 
