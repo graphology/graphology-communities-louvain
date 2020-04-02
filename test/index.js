@@ -168,7 +168,7 @@ describe('graphology-communities-louvain', function() {
     assert.strictEqual(distinctSize(communities), distinctSize(clique3.partitioning));
   });
 
-  it.skip('should handle heavy-sized complex graph (undirected, with self-loops) (500 nodes, 4302 links)', function() {
+  it('should handle heavy-sized complex graph (undirected, with self-loops) (500 nodes, 4302 links)', function() {
     var result = louvain.detailed(complex500.graph);
     // console.log(result.modularity, result.level, result.count);
     // dumpToImage(complex500.graph, result.communities);
@@ -198,7 +198,6 @@ describe('graphology-communities-louvain', function() {
 
   it('should work with undirected EuroSIS (1258 nodes, 6462 links).', function() {
     var result = louvain.detailed(undirectedEuroSis);
-
     assert.strictEqual(result.count, 12);
     // console.log(result.modularity, result.level, result.count);
     // dumpToImage(undirectedEuroSis, result.communities);
