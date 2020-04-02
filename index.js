@@ -100,10 +100,8 @@ function undirectedLouvain(detailed, graph, options) {
     moveWasMade = false;
     localMoveWasMade = true;
 
-    if (detailed) {
-      localMoves = [];
-      moves.push(localMoves);
-    }
+    localMoves = [];
+    moves.push(localMoves);
 
     while (localMoveWasMade) {
 
@@ -201,8 +199,7 @@ function undirectedLouvain(detailed, graph, options) {
         }
       }
 
-      if (detailed)
-        localMoves.push(currentMoves);
+      localMoves.push(currentMoves);
 
       moveWasMade = localMoveWasMade || moveWasMade;
     }
