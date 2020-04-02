@@ -85,7 +85,7 @@ function undirectedLouvain(detailed, graph, options) {
   var bestCommunity,
       bestCommunityDegree,
       bestDelta,
-      shouldMove,
+      deltaIsBetter,
       delta;
 
   while (moveWasMade) {
@@ -148,21 +148,21 @@ function undirectedLouvain(detailed, graph, options) {
           }
 
           // NOTE: tie breaker here for better determinism
-          shouldMove = false;
+          deltaIsBetter = false;
 
           if (delta === bestDelta) {
             if (bestCommunity === currentCommunity) {
-              shouldMove = false;
+              deltaIsBetter = false;
             }
             else {
-              shouldMove = targetCommunity > bestCommunity;
+              deltaIsBetter = targetCommunity > bestCommunity;
             }
           }
           else if (delta > bestDelta) {
-            shouldMove = true;
+            deltaIsBetter = true;
           }
 
-          if (shouldMove) {
+          if (deltaIsBetter) {
             bestDelta = delta;
             bestCommunity = targetCommunity;
             bestCommunityDegree = targetCommunityDegree;
