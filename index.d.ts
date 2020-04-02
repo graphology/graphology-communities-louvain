@@ -11,12 +11,16 @@ export type LouvainOptions = {
 
 type LouvainMapping = {[key: string]: number};
 
+type RNGFunction = () => number;
+
 type DetailedLouvainOutput = {
   communities: LouvainMapping,
   count: number,
   deltaComputations: number,
   modularity: number,
-  moves: Array<Array<number>>;
+  moves: Array<Array<number>>,
+  randomWalk: true,
+  rng: RNGFunction
 };
 
 declare const louvain: {

@@ -1,6 +1,3 @@
-/* eslint no-unused-vars: 0 */
-/* eslint no-console: 0 */
-
 /**
  * Graphology Louvain Algorithm
  * =============================
@@ -31,7 +28,8 @@
 var defaults = require('lodash/defaultsDeep'),
     isGraph = require('graphology-utils/is-graph'),
     inferType = require('graphology-utils/infer-type'),
-    SparseMap = require('mnemonist/sparse-map');
+    SparseMap = require('mnemonist/sparse-map'),
+    createRandomIndex = require('pandemonium/random-index').createRandomIndex;
 
 var indices = require('graphology-indices/neighborhood/louvain');
 
@@ -43,6 +41,8 @@ var DEFAULTS = {
     weight: 'weight'
   },
   deltaComputation: 'original',
+  randomWalk: true,
+  rng: Math.random,
   weighted: false
 };
 
@@ -133,6 +133,8 @@ function undirectedLouvain(detailed, graph, options) {
 
   var deltaComputation = UNDIRECTED_DELTAS[options.deltaComputation];
 
+  var randomIndex = createRandomIndex(options.rng);
+
   // State variables
   var moveWasMade = true,
       localMoveWasMade = true;
@@ -146,6 +148,7 @@ function undirectedLouvain(detailed, graph, options) {
       end,
       weight,
       ci,
+      ri,
       i,
       j,
       l;
@@ -182,7 +185,10 @@ function undirectedLouvain(detailed, graph, options) {
       currentMoves = 0;
 
       // Traversal of the graph
-      for (i = 0; i < l; i++) {
+      ri = options.randomWalk ? randomIndex(l) : 0;
+
+      for (; ri < l; ri++) {
+        i = ri % l;
 
         degree = 0;
         communities.clear();
@@ -284,7 +290,7 @@ function undirectedLouvain(detailed, graph, options) {
   return results;
 }
 
-function directedLouvain(detailed, graph, options) {
+function directedLouvain() {
   throw new Error('graphology-communities-louvain: not implemented');
 }
 
@@ -360,5 +366,6 @@ function louvain(assign, detailed, graph, options) {
 var fn = louvain.bind(null, false, false);
 fn.assign = louvain.bind(null, true, false);
 fn.detailed = louvain.bind(null, false, true);
+fn.defaults = DEFAULTS;
 
 module.exports = fn;

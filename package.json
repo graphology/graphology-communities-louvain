@@ -54,7 +54,8 @@
     "graphology-types": "^0.16.0",
     "graphology-utils": "^1.7.0",
     "lodash": "^4.17.15",
-    "mnemonist": "^0.35.0"
+    "mnemonist": "^0.35.0",
+    "pandemonium": "^1.5.0"
   },
   "eslintConfig": {
     "extends": "@yomguithereal/eslint-config",

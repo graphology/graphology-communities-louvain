@@ -10,6 +10,8 @@ var assert = require('chai').assert,
     netToImg = require('net-to-img'),
     louvain = require('../');
 
+louvain.defaults.randomWalk = false;
+
 /**
  * Test helpers.
  */
