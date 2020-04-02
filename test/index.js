@@ -6,6 +6,7 @@ var assert = require('chai').assert,
     Graph = require('graphology'),
     modularity = require('graphology-metrics/modularity'),
     emptyGraph = require('graphology-generators/classic/empty'),
+    toUndirected = require('graphology-operators/to-undirected'),
     netToImg = require('net-to-img'),
     louvain = require('../');
 
@@ -83,6 +84,10 @@ var clique3 = parse(require('./datasets/clique3.json'), TYPE.UNDIRECTED),
     undirected500 = parse(require('./datasets/undirected500.json'), TYPE.UNDIRECTED),
     undirected1000 = parse(require('./datasets/undirected1000.json'), TYPE.UNDIRECTED),
     directed1000 = parse(require('./datasets/directed1000.json'), TYPE.DIRECTED);
+
+var euroSis = Graph.DirectedGraph.from(require('./datasets/eurosis.json'));
+
+var undirectedEuroSis = toUndirected(euroSis);
 
 /**
  * Actual unit tests.
@@ -189,5 +194,13 @@ describe('graphology-communities-louvain', function() {
     // console.log(result.modularity, result.level, result.count);
     // dumpToImage(directed1000.graph, result.communities);
     assert.strictEqual(distinctSize(result.communities), distinctSize(directed1000.partitioning));
+  });
+
+  it('should work with undirected EuroSIS.', function() {
+    var result = louvain.detailed(undirectedEuroSis);
+
+    assert.strictEqual(result.count, 14);
+    // console.log(result.modularity, result.level, result.count);
+    // dumpToImage(undirectedEuroSis, result.communities);
   });
 });
