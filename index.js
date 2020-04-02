@@ -88,6 +88,9 @@ function undirectedLouvain(detailed, graph, options) {
       deltaIsBetter,
       delta;
 
+  // Details
+  var deltaComputations = 0;
+
   while (moveWasMade) {
     l = index.C;
 
@@ -129,6 +132,8 @@ function undirectedLouvain(detailed, graph, options) {
         for (ci = 0; ci < communities.size; ci++) {
           targetCommunity = communities.dense[ci];
           targetCommunityDegree = communities.vals[ci];
+
+          deltaComputations++;
 
           if (targetCommunity === currentCommunity) {
             delta = index.deltaWithOwnCommunity(
@@ -195,7 +200,8 @@ function undirectedLouvain(detailed, graph, options) {
   }
 
   var results = {
-    index: index
+    index: index,
+    deltaComputations: deltaComputations
   };
 
   return results;
@@ -256,7 +262,8 @@ function louvain(assign, detailed, graph, options) {
   var output = {
     level: index.level,
     modularity: index.modularity(),
-    count: index.C
+    count: index.C,
+    deltaComputations: results.deltaComputations
   };
 
   if (assign) {

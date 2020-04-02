@@ -74,6 +74,13 @@ function dumpToImage(graph, communities) {
     }
   });
 }
+
+function printReport(result) {
+  console.log('Q =', result.modularity);
+  console.log('Level =', result.level);
+  console.log('Communities =', result.count);
+  console.log('Delta Computations =', result.deltaComputations);
+}
 /* eslint-enable */
 
 /**
@@ -170,28 +177,28 @@ describe('graphology-communities-louvain', function() {
 
   it('should handle heavy-sized complex graph (undirected, with self-loops) (500 nodes, 4302 links)', function() {
     var result = louvain.detailed(complex500.graph);
-    // console.log(result.modularity, result.level, result.count);
+    // printReport(result);
     // dumpToImage(complex500.graph, result.communities);
     assert.strictEqual(distinctSize(result.communities), distinctSize(complex500.partitioning));
   });
 
  it('should handle heavy-sized undirected graph (500 nodes, 4768 links)', function() {
     var result = louvain.detailed(undirected500.graph);
-    // console.log(result.modularity, result.level, result.count);
+    // printReport(result);
     // dumpToImage(undirected500.graph, result.communities);
     assert.strictEqual(distinctSize(result.communities), distinctSize(undirected500.partitioning));
   });
 
   it('should handle heavy-sized undirected graph (1000 nodes, 9724 links)', function() {
     var result = louvain.detailed(undirected1000.graph);
-    // console.log(result.modularity, result.level, result.count);
+    // printReport(result);
     // dumpToImage(undirected1000.graph, result.communities);
     assert.strictEqual(distinctSize(result.communities), distinctSize(undirected1000.partitioning));
   });
 
   it.skip('should handle heavy-sized directed graph (1000 nodes, 10000 links)', function() {
     var result = louvain.detailed(directed1000.graph);
-    // console.log(result.modularity, result.level, result.count);
+    // printReport(result);
     // dumpToImage(directed1000.graph, result.communities);
     assert.strictEqual(distinctSize(result.communities), distinctSize(directed1000.partitioning));
   });
@@ -199,7 +206,7 @@ describe('graphology-communities-louvain', function() {
   it('should work with undirected EuroSIS (1258 nodes, 6462 links).', function() {
     var result = louvain.detailed(undirectedEuroSis);
     assert.strictEqual(result.count, 12);
-    // console.log(result.modularity, result.level, result.count);
+    // printReport(result);
     // dumpToImage(undirectedEuroSis, result.communities);
   });
 });

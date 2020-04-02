@@ -12,6 +12,8 @@ type LouvainMapping = {[key: string]: number};
 
 type DetailedLouvainOutput = {
   communities: LouvainMapping,
+  count: number,
+  deltaComputations: number,
   modularity: number
 };
 
