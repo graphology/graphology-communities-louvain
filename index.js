@@ -121,7 +121,7 @@ var UNDIRECTED_DELTAS = {
     return index.trueDelta(
       i,
       degree,
-      communities.get(currentCommunity) || 0,
+      communities.get(currentCommunity) || 0,
       targetCommunityDegree,
       targetCommunity
     );
