@@ -165,11 +165,15 @@ describe('graphology-communities-louvain', function() {
 
   it.skip('should handle heavy-sized complex graph (undirected, with self-loops) (500 nodes, 4302 links)', function() {
     var result = louvain.detailed(complex500.graph);
+    // console.log(result.modularity, result.level, result.count);
+    // dumpToImage(complex500.graph, result.communities);
     assert.strictEqual(distinctSize(result.communities), distinctSize(complex500.partitioning));
   });
 
  it('should handle heavy-sized undirected graph (500 nodes, 4768 links)', function() {
     var result = louvain.detailed(undirected500.graph);
+    // console.log(result.modularity, result.level, result.count);
+    // dumpToImage(undirected500.graph, result.communities);
     assert.strictEqual(distinctSize(result.communities), distinctSize(undirected500.partitioning));
   });
 
