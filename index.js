@@ -56,6 +56,7 @@ function addWeightToCommunity(map, community, weight) {
   map.set(community, currentWeight);
 }
 
+// TODO: timing
 function undirectedLouvain(detailed, graph, options) {
   var index = new UndirectedLouvainIndex(graph, options);
 
