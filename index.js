@@ -171,7 +171,7 @@ function undirectedLouvain(detailed, graph, options) {
 
         // Should we move the node into a different community?
         if (
-          delta > 0 &&
+          bestDelta > 0 &&
           bestCommunity !== currentCommunity
         ) {
           localMoveWasMade = true;

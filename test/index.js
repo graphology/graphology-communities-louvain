@@ -196,10 +196,10 @@ describe('graphology-communities-louvain', function() {
     assert.strictEqual(distinctSize(result.communities), distinctSize(directed1000.partitioning));
   });
 
-  it('should work with undirected EuroSIS.', function() {
+  it('should work with undirected EuroSIS (1258 nodes, 6462 links).', function() {
     var result = louvain.detailed(undirectedEuroSis);
 
-    assert.strictEqual(result.count, 14);
+    assert.strictEqual(result.count, 12);
     // console.log(result.modularity, result.level, result.count);
     // dumpToImage(undirectedEuroSis, result.communities);
   });
