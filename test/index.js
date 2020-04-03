@@ -205,10 +205,11 @@ describe('graphology-communities-louvain', function() {
     assert.strictEqual(distinctSize(result.communities), distinctSize(undirected1000.partitioning));
   });
 
-  it.skip('should handle heavy-sized directed graph (1000 nodes, 10000 links)', function() {
+  it('should handle heavy-sized directed graph (1000 nodes, 10000 links)', function() {
     var result = louvain.detailed(directed1000.graph);
     // printReport(result);
     // dumpToImage(directed1000.graph, result.communities);
+    assert.closeTo(result.modularity, modularity(directed1000.graph, {communities: result.communities}), 0.0001);
     assert.strictEqual(distinctSize(result.communities), distinctSize(directed1000.partitioning));
   });
 
