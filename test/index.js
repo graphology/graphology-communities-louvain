@@ -215,9 +215,9 @@ describe('graphology-communities-louvain', function() {
 
   it('should work with undirected EuroSIS (1285 nodes, 6462 links).', function() {
     var result = louvain.detailed(undirectedEuroSis);
-    assert.strictEqual(result.count, 12);
+    assert.strictEqual(result.count, 17);
 
-    // assert.closeTo(result.modularity, modularity(undirectedEuroSis, {communities: result.communities}), 0.0001);
+    assert.closeTo(result.modularity, modularity(undirectedEuroSis, {communities: result.communities}), 0.0001);
     // printReport(result);
     // dumpToImage(undirectedEuroSis, result.communities);
   });
@@ -225,7 +225,7 @@ describe('graphology-communities-louvain', function() {
   it('should work with directed EuroSIS (1285 nodes, 7524 links).', function() {
     var result = louvain.detailed(euroSis);
 
-    assert.strictEqual(result.count, 13);
+    assert.strictEqual(result.count, 18);
 
     // assert.closeTo(result.modularity, modularity(euroSis, {communities: result.communities}), 0.0001);
     // printReport(result);
@@ -238,8 +238,8 @@ describe('graphology-communities-louvain', function() {
       rng: seedrandom('test')
     });
 
-    assert.strictEqual(result.count, 12);
-    assert.closeTo(result.modularity, 0.761, 0.0001);
+    assert.strictEqual(result.count, 17);
+    assert.closeTo(result.modularity, 0.7273, 0.0001);
   });
 
   it('should be possible to use fast local moves.', function() {
@@ -249,7 +249,7 @@ describe('graphology-communities-louvain', function() {
       fastLocalMoves: true
     });
 
-    assert.strictEqual(result.count, 13);
-    assert.closeTo(result.modularity, 0.7696, 0.0001);
+    assert.strictEqual(result.count, 18);
+    assert.closeTo(result.modularity, 0.7258, 0.0001);
   });
 });
