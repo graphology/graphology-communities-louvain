@@ -10,6 +10,7 @@ export type LouvainOptions = {
     weight: 'weight'
   },
   deltaComputation: 'original' | 'true' | 'fast',
+  fastLocalMoves: boolean,
   randomWalk: boolean,
   rng: RNGFunction,
   weighted: boolean

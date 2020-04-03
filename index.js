@@ -41,6 +41,7 @@ var DEFAULTS = {
     weight: 'weight'
   },
   deltaComputation: 'original',
+  fastLocalMoves: false,
   randomWalk: true,
   rng: Math.random,
   weighted: false
