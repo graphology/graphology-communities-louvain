@@ -1,26 +1,29 @@
 import Graph from 'graphology';
 
+type RNGFunction = () => number;
+
+type PointerArray = Uint8Array | Uint16Array | Uint32Array | Float64Array;
+
 export type LouvainOptions = {
   attributes: {
     community: 'community',
     weight: 'weight'
   },
   deltaComputation: 'original' | 'true' | 'fast',
+  randomWalk: boolean,
+  rng: RNGFunction,
   weighted: boolean
 };
 
 type LouvainMapping = {[key: string]: number};
 
-type RNGFunction = () => number;
-
-type DetailedLouvainOutput = {
+export type DetailedLouvainOutput = {
   communities: LouvainMapping,
   count: number,
   deltaComputations: number,
+  dendrogram: Array<PointerArray>;
   modularity: number,
-  moves: Array<Array<number>>,
-  randomWalk: true,
-  rng: RNGFunction
+  moves: Array<Array<number>>
 };
 
 declare const louvain: {

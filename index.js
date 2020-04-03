@@ -129,7 +129,13 @@ var UNDIRECTED_DELTAS = {
 };
 
 function undirectedLouvain(detailed, graph, options) {
-  var index = new UndirectedLouvainIndex(graph, options);
+  var index = new UndirectedLouvainIndex(graph, {
+    attributes: {
+      weight: options.attributes.weight
+    },
+    keepDendrogram: detailed,
+    weighted: options.weighted
+  });
 
   var deltaComputation = UNDIRECTED_DELTAS[options.deltaComputation];
 
@@ -343,10 +349,11 @@ function louvain(assign, detailed, graph, options) {
 
   // Detailed output
   var output = {
-    level: index.level,
-    modularity: index.modularity(),
     count: index.C,
     deltaComputations: results.deltaComputations,
+    dendrogram: index.dendrogram,
+    level: index.level,
+    modularity: index.modularity(),
     moves: results.moves
   };
 
