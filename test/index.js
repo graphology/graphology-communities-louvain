@@ -225,8 +225,8 @@ describe('graphology-communities-louvain', function() {
       rng: seedrandom('test')
     });
 
-    assert.strictEqual(result.count, 48);
-    assert.closeTo(result.modularity, 0.6734, 0.0001);
+    assert.strictEqual(result.count, 12);
+    assert.closeTo(result.modularity, 0.761, 0.0001);
   });
 
   it.skip('should be possible to use fast local moves.', function() {

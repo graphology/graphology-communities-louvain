@@ -163,6 +163,7 @@ function undirectedLouvain(detailed, graph, options) {
       weight,
       ci,
       ri,
+      s,
       i,
       j,
       l;
@@ -216,10 +217,9 @@ function undirectedLouvain(detailed, graph, options) {
         localMoveWasMade = false;
         currentMoves = 0;
 
-        // Traversal of the graph
         ri = options.randomWalk ? randomIndex(l) : 0;
 
-        for (; ri < l; ri++) {
+        for (s = 0; s < l; s++, ri++) {
           i = ri % l;
 
           degree = 0;
