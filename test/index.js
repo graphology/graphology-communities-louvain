@@ -11,8 +11,9 @@ var assert = require('chai').assert,
     netToImg = require('net-to-img'),
     louvain = require('../');
 
-// Disabling random walk for tests
+// Tweaking defaults fot tests
 louvain.defaults.randomWalk = false;
+louvain.defaults.fastLocalMoves = false;
 
 /**
  * Test helpers.
@@ -211,9 +212,10 @@ describe('graphology-communities-louvain', function() {
     assert.strictEqual(distinctSize(result.communities), distinctSize(directed1000.partitioning));
   });
 
-  it('should work with undirected EuroSIS (1258 nodes, 6462 links).', function() {
+  it('should work with undirected EuroSIS (1285 nodes, 6462 links).', function() {
     var result = louvain.detailed(undirectedEuroSis);
     assert.strictEqual(result.count, 12);
+
     // assert.closeTo(result.modularity, modularity(undirectedEuroSis, {communities: result.communities}), 0.0001);
     // printReport(result);
     // dumpToImage(undirectedEuroSis, result.communities);
@@ -229,13 +231,14 @@ describe('graphology-communities-louvain', function() {
     assert.closeTo(result.modularity, 0.761, 0.0001);
   });
 
-  it.skip('should be possible to use fast local moves.', function() {
-    // var result = louvain.detailed(undirectedEuroSis, {
-    //   randomWalk: true,
-    //   rng: seedrandom('test'),
-    //   fastLocalMoves: true
-    // });
+  it('should be possible to use fast local moves.', function() {
+    var result = louvain.detailed(undirectedEuroSis, {
+      randomWalk: true,
+      rng: seedrandom('test'),
+      fastLocalMoves: true
+    });
 
-    // console.log(result);
+    assert.strictEqual(result.count, 13);
+    assert.closeTo(result.modularity, 0.7696, 0.0001);
   });
 });

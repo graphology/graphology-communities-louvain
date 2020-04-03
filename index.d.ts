@@ -24,7 +24,7 @@ export type DetailedLouvainOutput = {
   deltaComputations: number,
   dendrogram: Array<PointerArray>;
   modularity: number,
-  moves: Array<Array<number>>
+  moves: Array<Array<number>> | Array<number>
 };
 
 declare const louvain: {
