@@ -186,101 +186,108 @@ function undirectedLouvain(detailed, graph, options) {
     localMoves = [];
     moves.push(localMoves);
 
-    while (localMoveWasMade) {
+    if (options.fastLocalMoves) {
+      // TODO...
+    }
+    else {
 
-      localMoveWasMade = false;
-      currentMoves = 0;
+      // Traditional Louvain iterative traversal of the graph
+      while (localMoveWasMade) {
 
-      // Traversal of the graph
-      ri = options.randomWalk ? randomIndex(l) : 0;
+        localMoveWasMade = false;
+        currentMoves = 0;
 
-      for (; ri < l; ri++) {
-        i = ri % l;
+        // Traversal of the graph
+        ri = options.randomWalk ? randomIndex(l) : 0;
 
-        degree = 0;
-        communities.clear();
+        for (; ri < l; ri++) {
+          i = ri % l;
 
-        currentCommunity = index.belongings[i];
+          degree = 0;
+          communities.clear();
 
-        start = index.starts[i];
-        end = index.starts[i + 1];
+          currentCommunity = index.belongings[i];
 
-        // Traversing neighbors
-        for (; start < end; start++) {
-          j = index.neighborhood[start];
-          weight = index.weights[start];
+          start = index.starts[i];
+          end = index.starts[i + 1];
 
-          targetCommunity = index.belongings[j];
+          // Traversing neighbors
+          for (; start < end; start++) {
+            j = index.neighborhood[start];
+            weight = index.weights[start];
 
-          // Incrementing metrics
-          degree += weight;
-          addWeightToCommunity(communities, targetCommunity, weight);
-        }
+            targetCommunity = index.belongings[j];
 
-        // Finding best community to move to
-        bestDelta = -Infinity;
-        bestCommunity = currentCommunity;
-        bestCommunityDegree = 0;
+            // Incrementing metrics
+            degree += weight;
+            addWeightToCommunity(communities, targetCommunity, weight);
+          }
 
-        for (ci = 0; ci < communities.size; ci++) {
-          targetCommunity = communities.dense[ci];
-          targetCommunityDegree = communities.vals[ci];
+          // Finding best community to move to
+          bestDelta = -Infinity;
+          bestCommunity = currentCommunity;
+          bestCommunityDegree = 0;
 
-          deltaComputations++;
+          for (ci = 0; ci < communities.size; ci++) {
+            targetCommunity = communities.dense[ci];
+            targetCommunityDegree = communities.vals[ci];
 
-          delta = deltaComputation(
-            index,
-            i,
-            degree,
-            currentCommunity,
-            targetCommunityDegree,
-            targetCommunity,
-            communities
-          );
+            deltaComputations++;
 
-          // NOTE: tie breaker here for better determinism
-          deltaIsBetter = false;
+            delta = deltaComputation(
+              index,
+              i,
+              degree,
+              currentCommunity,
+              targetCommunityDegree,
+              targetCommunity,
+              communities
+            );
 
-          if (delta === bestDelta) {
-            if (bestCommunity === currentCommunity) {
-              deltaIsBetter = false;
+            // NOTE: tie breaker here for better determinism
+            deltaIsBetter = false;
+
+            if (delta === bestDelta) {
+              if (bestCommunity === currentCommunity) {
+                deltaIsBetter = false;
+              }
+              else {
+                deltaIsBetter = targetCommunity > bestCommunity;
+              }
             }
-            else {
-              deltaIsBetter = targetCommunity > bestCommunity;
+            else if (delta > bestDelta) {
+              deltaIsBetter = true;
+            }
+
+            if (deltaIsBetter) {
+              bestDelta = delta;
+              bestCommunity = targetCommunity;
+              bestCommunityDegree = targetCommunityDegree;
             }
           }
-          else if (delta > bestDelta) {
-            deltaIsBetter = true;
-          }
 
-          if (deltaIsBetter) {
-            bestDelta = delta;
-            bestCommunity = targetCommunity;
-            bestCommunityDegree = targetCommunityDegree;
+          // Should we move the node into a different community?
+          if (
+            bestDelta > 0 &&
+            bestCommunity !== currentCommunity
+          ) {
+            localMoveWasMade = true;
+            currentMoves++;
+
+            index.move(
+              i,
+              degree,
+              communities.get(currentCommunity) || 0,
+              bestCommunityDegree,
+              bestCommunity
+            );
           }
         }
 
-        // Should we move the node into a different community?
-        if (
-          bestDelta > 0 &&
-          bestCommunity !== currentCommunity
-        ) {
-          localMoveWasMade = true;
-          currentMoves++;
+        localMoves.push(currentMoves);
 
-          index.move(
-            i,
-            degree,
-            communities.get(currentCommunity) || 0,
-            bestCommunityDegree,
-            bestCommunity
-          );
-        }
+        moveWasMade = localMoveWasMade || moveWasMade;
       }
-
-      localMoves.push(currentMoves);
-
-      moveWasMade = localMoveWasMade || moveWasMade;
     }
 
     // We continue working on the induced graph
