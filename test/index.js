@@ -185,7 +185,7 @@ describe('graphology-communities-louvain', function() {
     assert.strictEqual(distinctSize(result.communities), distinctSize(complex500.partitioning));
   });
 
- it('should handle heavy-sized undirected graph (500 nodes, 4768 links)', function() {
+  it('should handle heavy-sized undirected graph (500 nodes, 4768 links)', function() {
     var result = louvain.detailed(undirected500.graph);
     // printReport(result);
     // dumpToImage(undirected500.graph, result.communities);
