@@ -141,7 +141,7 @@ function undirectedLouvain(detailed, graph, options) {
 
   // Communities
   var currentCommunity, targetCommunity;
-  var communities = new SparseMap(index.C);
+  var communities = new SparseMap(Float64Array, index.C);
 
   // Traversal
   var start,

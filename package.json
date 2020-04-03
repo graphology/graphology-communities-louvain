@@ -60,6 +60,7 @@
   "eslintConfig": {
     "extends": "@yomguithereal/eslint-config",
     "globals": {
+      "Float64Array": true,
       "Set": true
     }
   }
