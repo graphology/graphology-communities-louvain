@@ -228,4 +228,14 @@ describe('graphology-communities-louvain', function() {
     assert.strictEqual(result.count, 48);
     assert.closeTo(result.modularity, 0.6734, 0.0001);
   });
+
+  it.skip('should be possible to use fast local moves.', function() {
+    // var result = louvain.detailed(undirectedEuroSis, {
+    //   randomWalk: true,
+    //   rng: seedrandom('test'),
+    //   fastLocalMoves: true
+    // });
+
+    // console.log(result);
+  });
 });

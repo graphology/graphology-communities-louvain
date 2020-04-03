@@ -24,11 +24,17 @@
  * Multiscale Modular Structure in Networks,
  * doi:10.1109/TNSE.2015.2391998.
  * https://arxiv.org/abs/0812.1770
+ *
+ * Traag, V. A., et al. « From Louvain to Leiden: Guaranteeing Well-Connected
+ * Communities ». Scientific Reports, vol. 9, no 1, décembre 2019, p. 5233.
+ * DOI.org (Crossref), doi:10.1038/s41598-019-41695-z.
+ * https://arxiv.org/abs/1810.08473
  */
 var defaults = require('lodash/defaultsDeep'),
     isGraph = require('graphology-utils/is-graph'),
     inferType = require('graphology-utils/infer-type'),
     SparseMap = require('mnemonist/sparse-map'),
+    SparseQueueSet = require('mnemonist/sparse-queue-set'),
     createRandomIndex = require('pandemonium/random-index').createRandomIndex;
 
 var indices = require('graphology-indices/neighborhood/louvain');
@@ -151,7 +157,8 @@ function undirectedLouvain(detailed, graph, options) {
   var communities = new SparseMap(Float64Array, index.C);
 
   // Traversal
-  var start,
+  var queue,
+      start,
       end,
       weight,
       ci,
@@ -177,6 +184,9 @@ function undirectedLouvain(detailed, graph, options) {
       localMoves,
       currentMoves;
 
+  if (options.fastLocalMoves)
+    queue = new SparseQueueSet(index.C);
+
   while (moveWasMade) {
     l = index.C;
 
@@ -187,7 +197,16 @@ function undirectedLouvain(detailed, graph, options) {
     moves.push(localMoves);
 
     if (options.fastLocalMoves) {
-      // TODO...
+      currentMoves = 0;
+
+      // Traversal of the graph
+      ri = options.randomWalk ? randomIndex(l) : 0;
+
+      for (; ri < l; ri++) {
+        i = ri % l;
+        queue.enqueue(i);
+        // console.log(i)
+      }
     }
     else {
 
