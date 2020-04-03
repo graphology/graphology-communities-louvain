@@ -224,7 +224,7 @@ function undirectedLouvain(detailed, graph, options) {
           }
 
           // Finding best community to move to
-          bestDelta = -Infinity;
+          bestDelta = 0;
           bestCommunity = currentCommunity;
           bestCommunityDegree = 0;
 
