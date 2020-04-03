@@ -10,6 +10,7 @@ var assert = require('chai').assert,
     netToImg = require('net-to-img'),
     louvain = require('../');
 
+// Disabling random walk for tests
 louvain.defaults.randomWalk = false;
 
 /**
@@ -182,6 +183,7 @@ describe('graphology-communities-louvain', function() {
     var result = louvain.detailed(complex500.graph);
     // printReport(result);
     // dumpToImage(complex500.graph, result.communities);
+    assert.closeTo(result.modularity, modularity(complex500.graph, {communities: result.communities}), 0.0001);
     assert.strictEqual(distinctSize(result.communities), distinctSize(complex500.partitioning));
   });
 
@@ -189,6 +191,7 @@ describe('graphology-communities-louvain', function() {
     var result = louvain.detailed(undirected500.graph);
     // printReport(result);
     // dumpToImage(undirected500.graph, result.communities);
+    assert.closeTo(result.modularity, modularity(undirected500.graph, {communities: result.communities}), 0.0001);
     assert.strictEqual(distinctSize(result.communities), distinctSize(undirected500.partitioning));
   });
 
@@ -196,6 +199,7 @@ describe('graphology-communities-louvain', function() {
     var result = louvain.detailed(undirected1000.graph);
     // printReport(result);
     // dumpToImage(undirected1000.graph, result.communities);
+    assert.closeTo(result.modularity, modularity(undirected1000.graph, {communities: result.communities}), 0.0001);
     assert.strictEqual(distinctSize(result.communities), distinctSize(undirected1000.partitioning));
   });
 
@@ -209,6 +213,7 @@ describe('graphology-communities-louvain', function() {
   it('should work with undirected EuroSIS (1258 nodes, 6462 links).', function() {
     var result = louvain.detailed(undirectedEuroSis);
     assert.strictEqual(result.count, 12);
+    // assert.closeTo(result.modularity, modularity(undirectedEuroSis, {communities: result.communities}), 0.0001);
     // printReport(result);
     // dumpToImage(undirectedEuroSis, result.communities);
   });
