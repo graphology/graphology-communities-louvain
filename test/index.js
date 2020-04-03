@@ -3,6 +3,7 @@
  * ==============================
  */
 var assert = require('chai').assert,
+    seedrandom = require('seedrandom'),
     Graph = require('graphology'),
     modularity = require('graphology-metrics/modularity'),
     emptyGraph = require('graphology-generators/classic/empty'),
@@ -216,5 +217,15 @@ describe('graphology-communities-louvain', function() {
     // assert.closeTo(result.modularity, modularity(undirectedEuroSis, {communities: result.communities}), 0.0001);
     // printReport(result);
     // dumpToImage(undirectedEuroSis, result.communities);
+  });
+
+  it('should be possible to seed the random walk.', function() {
+    var result = louvain.detailed(undirectedEuroSis, {
+      randomWalk: true,
+      rng: seedrandom('test')
+    });
+
+    assert.strictEqual(result.count, 48);
+    assert.closeTo(result.modularity, 0.6734, 0.0001);
   });
 });
