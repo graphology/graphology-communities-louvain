@@ -222,6 +222,16 @@ describe('graphology-communities-louvain', function() {
     // dumpToImage(undirectedEuroSis, result.communities);
   });
 
+  it('should work with directed EuroSIS (1285 nodes, 7524 links).', function() {
+    var result = louvain.detailed(euroSis);
+
+    assert.strictEqual(result.count, 13);
+
+    // assert.closeTo(result.modularity, modularity(euroSis, {communities: result.communities}), 0.0001);
+    // printReport(result);
+    // dumpToImage(euroSis, result.communities);
+  });
+
   it('should be possible to seed the random walk.', function() {
     var result = louvain.detailed(undirectedEuroSis, {
       randomWalk: true,
