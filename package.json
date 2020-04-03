@@ -44,7 +44,7 @@
     "eslint": "^6.8.0",
     "graphology": "^0.16.1",
     "graphology-generators": "^0.10.1",
-    "graphology-metrics": "1.10.1",
+    "graphology-metrics": "^1.11.0",
     "graphology-operators": "^1.1.0",
     "mocha": "^7.1.1",
     "net-to-img": "^0.4.0"
@@ -54,7 +54,7 @@
     "graphology-types": "^0.16.0",
     "graphology-utils": "^1.7.0",
     "lodash": "^4.17.15",
-    "mnemonist": "^0.35.0",
+    "mnemonist": "^0.36.0",
     "pandemonium": "^1.5.0"
   },
   "eslintConfig": {
