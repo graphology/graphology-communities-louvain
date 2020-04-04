@@ -225,9 +225,9 @@ describe('graphology-communities-louvain', function() {
   it('should work with directed EuroSIS (1285 nodes, 7524 links).', function() {
     var result = louvain.detailed(euroSis);
 
-    assert.strictEqual(result.count, 18);
+    assert.strictEqual(result.count, 19);
 
-    // assert.closeTo(result.modularity, modularity(euroSis, {communities: result.communities}), 0.0001);
+    assert.closeTo(result.modularity, modularity(euroSis, {communities: result.communities}), 0.0001);
     // printReport(result);
     // dumpToImage(euroSis, result.communities);
   });
