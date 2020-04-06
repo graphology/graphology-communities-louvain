@@ -109,7 +109,7 @@ var undirectedEuroSis = toUndirected(euroSis);
 describe('graphology-communities-louvain', function() {
 
   // High timeout
-  this.timeout(30 * 1000);
+  this.timeout(2 * 1000);
 
   it('should throw when given invalid arguments.', function() {
 
