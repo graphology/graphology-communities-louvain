@@ -3,7 +3,7 @@ var euroSisData = require('../test/datasets/eurosis.json');
 
 var Graph = require('graphology');
 var modularity = require('graphology-metrics/modularity');
-var toUndirected = require('graphology-operators/to-undirected');
+// var toUndirected = require('graphology-operators/to-undirected');
 var generateClusters = require('graphology-generators/random/clusters');
 var jLouvain = require('jlouvain').jLouvain;
 var createNGraph = require('ngraph.graph');
@@ -59,11 +59,11 @@ undirected1000Data.edges.forEach(d => {
 var undirected1000NodeData = undirected1000Data.nodes.map(d => d.id);
 
 var euroSis = Graph.DirectedGraph.from(euroSisData);
-var undirectedEuroSis = toUndirected(euroSis);
+// var undirectedEuroSis = toUndirected(euroSis);
 var euroSisNGraph = createNGraph();
 
-undirectedEuroSis.forEachNode(n => euroSisNGraph.addNode(n));
-undirectedEuroSis.forEachEdge((s, t) => euroSisNGraph.addLink(s, t));
+euroSis.forEachNode(n => euroSisNGraph.addNode(n));
+euroSis.forEachEdge((e, a, s, t) => euroSisNGraph.addLink(s, t));
 
 var euroSisNodeData = euroSis.nodes();
 var euroSisEdgeData = euroSis.edges().map(e => {
@@ -73,7 +73,7 @@ var euroSisEdgeData = euroSis.edges().map(e => {
   };
 });
 
-var bigGraph = generateClusters(Graph.UndirectedGraph, {order: 10000, size: 300000, clusters: 7});
+var bigGraph = generateClusters(Graph.UndirectedGraph, {order: 50000, size: 1000000, clusters: 50});
 var bigGraphNGraph = createNGraph();
 
 var bigGraphNodeData = bigGraph.nodes();
@@ -85,7 +85,7 @@ var bigGraphEdgeData = bigGraph.edges().map(e => {
 });
 
 bigGraph.forEachNode(n => bigGraphNGraph.addNode(n));
-bigGraph.forEachEdge((s, t) => bigGraphNGraph.addLink(s, t));
+bigGraph.forEachEdge((e, a, s, t) => bigGraphNGraph.addLink(s, t));
 
 // Bench
 var communities;
@@ -117,6 +117,9 @@ console.log('Communities', distinctSize(communities));
 console.log();
 
 //---
+console.log();
+console.log('---')
+console.log();
 
 console.time('graphology euroSis');
 communities = louvain(euroSis);
@@ -144,6 +147,10 @@ console.log('Communities', distinctSize(communities));
 console.log();
 
 //---
+console.log();
+console.log('---')
+console.log();
+
 console.time('graphology bigGraph');
 communities = louvain(bigGraph);
 console.timeEnd('graphology bigGraph');
