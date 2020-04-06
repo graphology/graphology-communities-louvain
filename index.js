@@ -469,7 +469,6 @@ function directedLouvain(detailed, graph, options) {
   var communitiesIn = new SparseMap(Float64Array, index.C);
   var communitiesOut = new SparseMap(Float64Array, index.C);
 
-  /* eslint no-unused-vars: 0 */
   // Traversal
   var queue,
       start,
@@ -483,7 +482,6 @@ function directedLouvain(detailed, graph, options) {
       i,
       j,
       l;
-  /* eslint no-unused-vars: 1 */
 
   // Metrics
   var inDegree,
@@ -512,113 +510,128 @@ function directedLouvain(detailed, graph, options) {
     localMoveWasMade = true;
 
     if (options.fastLocalMoves) {
-      // currentMoves = 0;
+      currentMoves = 0;
 
-      // // Traversal of the graph
-      // ri = options.randomWalk ? randomIndex(l) : 0;
+      // Traversal of the graph
+      ri = options.randomWalk ? randomIndex(l) : 0;
 
-      // for (s = 0; s < l; s++, ri++) {
-      //   i = ri % l;
-      //   queue.enqueue(i);
-      // }
+      for (s = 0; s < l; s++, ri++) {
+        i = ri % l;
+        queue.enqueue(i);
+      }
 
-      // while (queue.size !== 0) {
-      //   i = queue.dequeue();
+      while (queue.size !== 0) {
+        i = queue.dequeue();
 
-      //   degree = 0;
-      //   communities.clear();
+        inDegree = 0;
+        outDegree = 0;
+        communities.clear();
+        communitiesIn.clear();
+        communitiesOut.clear();
 
-      //   currentCommunity = index.belongings[i];
+        currentCommunity = index.belongings[i];
 
-      //   start = index.starts[i];
-      //   end = index.starts[i + 1];
+        start = index.starts[i];
+        end = index.starts[i + 1];
+        offset = index.offsets[i];
 
-      //   // Traversing neighbors
-      //   for (; start < end; start++) {
-      //     j = index.neighborhood[start];
-      //     weight = index.weights[start];
+        // Traversing neighbors
+        for (; start < end; start++) {
+          out = start < offset;
+          j = index.neighborhood[start];
+          weight = index.weights[start];
 
-      //     targetCommunity = index.belongings[j];
+          targetCommunity = index.belongings[j];
 
-      //     // Incrementing metrics
-      //     degree += weight;
-      //     addWeightToCommunity(communities, targetCommunity, weight);
-      //   }
+          // Incrementing metrics
+          if (out) {
+            outDegree += weight;
+            addWeightToCommunity(communitiesOut, targetCommunity, weight);
+          }
+          else {
+            inDegree += weight;
+            addWeightToCommunity(communitiesIn, targetCommunity, weight);
+          }
 
-      //   // Finding best community to move to
-      //   bestDelta = 0;
-      //   bestCommunity = currentCommunity;
-      //   bestCommunityDegree = 0;
+          addWeightToCommunity(communities, targetCommunity, weight);
+        }
 
-      //   for (ci = 0; ci < communities.size; ci++) {
-      //     targetCommunity = communities.dense[ci];
-      //     targetCommunityDegree = communities.vals[ci];
+        // Finding best community to move to
+        bestDelta = 0;
+        bestCommunity = currentCommunity;
 
-      //     deltaComputations++;
+        for (ci = 0; ci < communities.size; ci++) {
+          targetCommunity = communities.dense[ci];
+          targetCommunityDegree = communities.vals[ci];
 
-      //     delta = deltaComputation(
-      //       index,
-      //       i,
-      //       inDegree,
-      //       outDegree,
-      //       currentCommunity,
-      //       targetCommunityDegree,
-      //       targetCommunity
-      //     );
+          deltaComputations++;
 
-      //     // NOTE: tie breaker here for better determinism
-      //     deltaIsBetter = false;
+          delta = deltaComputation(
+            index,
+            i,
+            inDegree,
+            outDegree,
+            currentCommunity,
+            targetCommunityDegree,
+            targetCommunity,
+            communities
+          );
 
-      //     if (delta === bestDelta) {
-      //       if (bestCommunity === currentCommunity) {
-      //         deltaIsBetter = false;
-      //       }
-      //       else {
-      //         deltaIsBetter = targetCommunity > bestCommunity;
-      //       }
-      //     }
-      //     else if (delta > bestDelta) {
-      //       deltaIsBetter = true;
-      //     }
+          // NOTE: tie breaker here for better determinism
+          deltaIsBetter = false;
 
-      //     if (deltaIsBetter) {
-      //       bestDelta = delta;
-      //       bestCommunity = targetCommunity;
-      //       bestCommunityDegree = targetCommunityDegree;
-      //     }
-      //   }
+          if (delta === bestDelta) {
+            if (bestCommunity === currentCommunity) {
+              deltaIsBetter = false;
+            }
+            else {
+              deltaIsBetter = targetCommunity > bestCommunity;
+            }
+          }
+          else if (delta > bestDelta) {
+            deltaIsBetter = true;
+          }
 
-      //   // Should we move the node into a different community?
-      //   if (
-      //     bestDelta > 0 &&
-      //     bestCommunity !== currentCommunity
-      //   ) {
-      //     moveWasMade = true;
-      //     currentMoves++;
+          if (deltaIsBetter) {
+            bestDelta = delta;
+            bestCommunity = targetCommunity;
+          }
+        }
 
-      //     index.move(
-      //       i,
-      //       degree,
-      //       communities.get(currentCommunity) || 0,
-      //       bestCommunityDegree,
-      //       bestCommunity
-      //     );
+        // Should we move the node into a different community?
+        if (
+          bestDelta > 0 &&
+          bestCommunity !== currentCommunity
+        ) {
+          moveWasMade = true;
+          currentMoves++;
 
-      //     // Adding neighbors from other communities to the queue
-      //     start = index.starts[i];
-      //     end = index.starts[i + 1];
+          index.move(
+            i,
+            inDegree,
+            outDegree,
+            communitiesIn.get(currentCommunity) || 0,
+            communitiesOut.get(currentCommunity) || 0,
+            communitiesIn.get(bestCommunity) || 0,
+            communitiesOut.get(bestCommunity) || 0,
+            bestCommunity
+          );
 
-      //     for (; start < end; start++) {
-      //       j = index.neighborhood[start];
-      //       targetCommunity = index.belongings[j];
+          // Adding neighbors from other communities to the queue
+          start = index.starts[i];
+          end = index.starts[i + 1];
 
-      //       if (targetCommunity !== bestCommunity)
-      //         queue.enqueue(j);
-      //     }
-      //   }
-      // }
+          for (; start < end; start++) {
+            j = index.neighborhood[start];
+            targetCommunity = index.belongings[j];
 
-      // moves.push(currentMoves);
+            if (targetCommunity !== bestCommunity)
+              queue.enqueue(j);
+          }
+        }
+      }
+
+      moves.push(currentMoves);
     }
     else {
 

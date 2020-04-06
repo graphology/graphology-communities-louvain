@@ -242,7 +242,7 @@ describe('graphology-communities-louvain', function() {
     assert.closeTo(result.modularity, 0.7273, 0.0001);
   });
 
-  it('should be possible to use fast local moves.', function() {
+  it('should be possible to use fast local moves in the undirected case.', function() {
     var result = louvain.detailed(undirectedEuroSis, {
       randomWalk: true,
       rng: seedrandom('test'),
@@ -251,5 +251,16 @@ describe('graphology-communities-louvain', function() {
 
     assert.strictEqual(result.count, 18);
     assert.closeTo(result.modularity, 0.7258, 0.0001);
+  });
+
+  it('should be possible to use fast local moves in the directed case.', function() {
+    var result = louvain.detailed(euroSis, {
+      randomWalk: true,
+      rng: seedrandom('test'),
+      fastLocalMoves: true
+    });
+
+    assert.strictEqual(result.count, 18);
+    assert.closeTo(result.modularity, 0.7411, 0.0001);
   });
 });
