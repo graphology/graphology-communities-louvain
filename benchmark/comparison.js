@@ -74,15 +74,21 @@ var euroSisEdgeData = euroSis.edges().map(e => {
 });
 
 var bigGraph = generateClusters(Graph.UndirectedGraph, {order: 50000, size: 1000000, clusters: 50});
+// var bigGraphStringKeys = new Graph.UndirectedGraph();
+// bigGraph.forEachEdge((e, a, s, t) => {
+//   bigGraphStringKeys.mergeEdge(`__${s}__`, `__${t}__`);
+// });
+// bigGraph = bigGraphStringKeys;
+
 var bigGraphNGraph = createNGraph();
 
-var bigGraphNodeData = bigGraph.nodes();
-var bigGraphEdgeData = bigGraph.edges().map(e => {
-  return {
-    source: bigGraph.source(e),
-    target: bigGraph.target(e)
-  };
-});
+// var bigGraphNodeData = bigGraph.nodes();
+// var bigGraphEdgeData = bigGraph.edges().map(e => {
+//   return {
+//     source: bigGraph.source(e),
+//     target: bigGraph.target(e)
+//   };
+// });
 
 bigGraph.forEachNode(n => bigGraphNGraph.addNode(n));
 bigGraph.forEachEdge((e, a, s, t) => bigGraphNGraph.addLink(s, t));
@@ -117,7 +123,6 @@ console.log('Communities', distinctSize(communities));
 console.log();
 
 //---
-console.log();
 console.log('---')
 console.log();
 
@@ -147,7 +152,6 @@ console.log('Communities', distinctSize(communities));
 console.log();
 
 //---
-console.log();
 console.log('---')
 console.log();
 
@@ -159,6 +163,7 @@ console.log('Communities', distinctSize(communities));
 console.log('Modularity', modularity(bigGraph, {communities}));
 console.log();
 
+// NOTE: too slow to finish in time
 // console.time('jlouvain bigGraph');
 // communities = jLouvain()
 //   .nodes(bigGraphNodeData)
