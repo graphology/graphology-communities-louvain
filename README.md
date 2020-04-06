@@ -24,7 +24,9 @@ npm install graphology-communities-louvain
 
 ## Usage
 
-Detect the communities of the given graph using Louvain's method.
+Runs the Louvain algorithm to detect communities in the given graph. It works both for undirected & directed graph by using the relevant modularity computations.
+
+Note that the community labels are returned as an integer range from 0 to n.
 
 ```js
 import louvain from 'graphology-communities-louvain';
@@ -35,20 +37,37 @@ const communities = louvain(graph);
 // To directly assign communities as a node attribute
 louvain.assign(graph);
 
-// If you need to customize attributes' names
+// If you need to pass custom options
 louvain.assign(graph, {
   attributes: {
     weight: 'myCustomWeight',
     community: 'myCustomCommunity'
   }
 });
+
+// If you want to return some details about the algorithm's execution
+var details = louvain.detailed(graph);
 ```
 
 *Arguments*
 
-* **graph** *Graph*: graph to which you want to get the best partitioning.
+* **graph** *Graph*: target graph.
 * **options** *?object*: options:
   * **attributes** *?object*: attributes' names:
     * **weight** *?string* [`weight`]: name of the edges' weight attribute.
-    * **community** *?string* [`community`]: name of the node attribute holding community information
+    * **community** *?string* [`community`]: name of the node attribute holding community information.
+  * **deltaComputation** *?string* [`original`]: what computation method to use: `original` for Louvain's paper method, `fast` for Gephi's optimization or `true` for applying true modularity delta formula. `fast` and `true` only work for the undirected version right now.
+  * **fastLocalMoves** *?boolean* [`true`]: whether to use a queue optimization to traverse the graph when moving nodes.
+  * **randomWalk** *?boolean* [`true`]: whether to traverse the graph randomly.
+  * **rng** *?function* [`Math.random`]: RNG function to use for `randomWalk`. Useful if you need to seed your rng using, for instance, [seedrandom](https://www.npmjs.com/package/seedrandom).
+  * **weighted** *?boolean* [`false`]: whether to take edge weights into account.
 
+*Detailed Output*
+
+* **communities** [`object`]: partition of the graph.
+* **count** [`number`]: number of communities in the partition.
+* **deltaComputations** [`number`]: number of delta computations that were run to produce the partition.
+* **dendrogram** [`array`]: array of partitions.
+* **modularity** [`number`]: final modularity of the graph given the found partition.
+* **moves** [`array`]: array of array of number of moves if `fastLocalMoves` was false or array of number of moves if `fastLocalMoves` was true.
+* **nodesVisited** [`number`]: number of times nodes were visited.
