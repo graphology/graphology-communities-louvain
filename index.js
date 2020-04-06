@@ -211,6 +211,7 @@ function undirectedLouvain(detailed, graph, options) {
 
   // Details
   var deltaComputations = 0,
+      nodesVisited = 0,
       moves = [],
       localMoves,
       currentMoves;
@@ -237,6 +238,7 @@ function undirectedLouvain(detailed, graph, options) {
 
       while (queue.size !== 0) {
         i = queue.dequeue();
+        nodesVisited++;
 
         degree = 0;
         communities.clear();
@@ -347,6 +349,8 @@ function undirectedLouvain(detailed, graph, options) {
         for (s = 0; s < l; s++, ri++) {
           i = ri % l;
 
+          nodesVisited++;
+
           degree = 0;
           communities.clear();
 
@@ -440,6 +444,7 @@ function undirectedLouvain(detailed, graph, options) {
   var results = {
     index: index,
     deltaComputations: deltaComputations,
+    nodesVisited: nodesVisited,
     moves: moves
   };
 
@@ -496,6 +501,7 @@ function directedLouvain(detailed, graph, options) {
 
   // Details
   var deltaComputations = 0,
+      nodesVisited = 0,
       moves = [],
       localMoves,
       currentMoves;
@@ -522,6 +528,7 @@ function directedLouvain(detailed, graph, options) {
 
       while (queue.size !== 0) {
         i = queue.dequeue();
+        nodesVisited++;
 
         inDegree = 0;
         outDegree = 0;
@@ -649,6 +656,8 @@ function directedLouvain(detailed, graph, options) {
         for (s = 0; s < l; s++, ri++) {
           i = ri % l;
 
+          nodesVisited++;
+
           inDegree = 0;
           outDegree = 0;
           communities.clear();
@@ -759,6 +768,7 @@ function directedLouvain(detailed, graph, options) {
   var results = {
     index: index,
     deltaComputations: deltaComputations,
+    nodesVisited: nodesVisited,
     moves: moves
   };
 
@@ -819,7 +829,8 @@ function louvain(assign, detailed, graph, options) {
     dendrogram: index.dendrogram,
     level: index.level,
     modularity: index.modularity(),
-    moves: results.moves
+    moves: results.moves,
+    nodesVisited: results.nodesVisited
   };
 
   if (assign) {
