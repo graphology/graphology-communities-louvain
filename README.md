@@ -55,9 +55,9 @@ var details = louvain.detailed(graph);
 * **options** *?object*: options:
   * **attributes** *?object*: attributes' names:
     * **weight** *?string* [`weight`]: name of the edges' weight attribute.
-    * **community** *?string* [`community`]: name of the node attribute holding community information.
+    * **community** *?string* [`community`]: name of the community attribute.
   * **deltaComputation** *?string* [`original`]: what computation method to use: `original` for Louvain's paper method, `fast` for Gephi's optimization or `true` for applying true modularity delta formula. `fast` and `true` only work for the undirected version right now.
-  * **fastLocalMoves** *?boolean* [`true`]: whether to use a queue optimization to traverse the graph when moving nodes.
+  * **fastLocalMoves** *?boolean* [`true`]: whether to use a well-known optimization relying on a queue set to traverse the graph more efficiently.
   * **randomWalk** *?boolean* [`true`]: whether to traverse the graph randomly.
   * **rng** *?function* [`Math.random`]: RNG function to use for `randomWalk`. Useful if you need to seed your rng using, for instance, [seedrandom](https://www.npmjs.com/package/seedrandom).
   * **weighted** *?boolean* [`false`]: whether to take edge weights into account.
