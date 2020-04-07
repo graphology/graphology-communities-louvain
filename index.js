@@ -54,19 +54,6 @@ var DEFAULTS = {
   weighted: false
 };
 
-// function compareOptionsToDefaults(options) {
-//   if (options.deltaComputation !== DEFAULTS.deltaComputation)
-//     return false;
-
-//   if (options.fastLocalMoves !== DEFAULTS.fastLocalMoves)
-//     return false;
-
-//   if (options.randomWalk !== DEFAULTS.randomWalk)
-//     return false;
-
-//   return true;
-// }
-
 function addWeightToCommunity(map, community, weight) {
   var currentWeight = map.get(community);
 
