@@ -53,6 +53,7 @@
     "ngraph.coarsen": "^1.4.2",
     "ngraph.graph": "^19.0.4",
     "ngraph.louvain": "^2.0.0",
+    "ngraph.louvain.native": "^1.0.0",
     "seedrandom": "^3.0.5"
   },
   "dependencies": {

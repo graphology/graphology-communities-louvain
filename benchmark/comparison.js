@@ -8,6 +8,7 @@ var generateClusters = require('graphology-generators/random/clusters');
 var jLouvain = require('jlouvain').jLouvain;
 var createNGraph = require('ngraph.graph');
 var ngraphLouvain = require('ngraph.louvain');
+var ngraphLouvainNative = require('ngraph.louvain.native');
 var ngraphCoarsen = require('ngraph.coarsen');
 var louvain = require('../');
 
@@ -23,6 +24,17 @@ function collectNGraphCommunities(g, result) {
 
 function ngraphLouvainHierarchy(g) {
   var clusters = ngraphLouvain(g);
+
+  while (clusters.canCoarse()) {
+    g = ngraphCoarsen(g, clusters);
+    clusters = ngraphLouvain(g);
+  }
+
+  return collectNGraphCommunities(g, clusters);
+}
+
+function ngraphLouvainHierarchyNative(g) {
+  var clusters = ngraphLouvainNative(g);
 
   while (clusters.canCoarse()) {
     g = ngraphCoarsen(g, clusters);
@@ -117,10 +129,16 @@ console.log('Communities', distinctSize(communities));
 console.log('Modularity', modularity(undirected1000, {communities}));
 console.log();
 
-
 console.time('ngraph.louvain undirected1000');
 communities = ngraphLouvainHierarchy(undirected1000NGraph);
 console.timeEnd('ngraph.louvain undirected1000');
+
+console.log('Communities', distinctSize(communities));
+console.log();
+
+console.time('ngraph.louvain.native undirected1000');
+communities = ngraphLouvainHierarchyNative(undirected1000NGraph);
+console.timeEnd('ngraph.louvain.native undirected1000');
 
 console.log('Communities', distinctSize(communities));
 console.log();
@@ -157,6 +175,13 @@ console.timeEnd('ngraph euroSis');
 console.log('Communities', distinctSize(communities));
 console.log();
 
+console.time('ngraph.native euroSis');
+communities = ngraphLouvainHierarchyNative(euroSisNGraph);
+console.timeEnd('ngraph.native euroSis');
+
+console.log('Communities', distinctSize(communities));
+console.log();
+
 //---
 console.log('---')
 console.log();
@@ -184,6 +209,13 @@ console.log();
 console.time('ngraph bigGraph');
 communities = ngraphLouvainHierarchy(bigGraphNGraph);
 console.timeEnd('ngraph bigGraph');
+
+console.log('Communities', distinctSize(communities));
+console.log();
+
+console.time('ngraph.native bigGraph');
+communities = ngraphLouvainHierarchyNative(bigGraphNGraph);
+console.timeEnd('ngraph.native bigGraph');
 
 console.log('Communities', distinctSize(communities));
 console.log();
