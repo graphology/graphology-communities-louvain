@@ -38,7 +38,7 @@ function ngraphLouvainHierarchyNative(g) {
 
   while (clusters.canCoarse()) {
     g = ngraphCoarsen(g, clusters);
-    clusters = ngraphLouvain(g);
+    clusters = ngraphLouvainNative(g);
   }
 
   return collectNGraphCommunities(g, clusters);
