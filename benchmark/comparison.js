@@ -96,6 +96,9 @@ bigGraph.forEachEdge((e, a, s, t) => bigGraphNGraph.addLink(s, t));
 // Bench
 var communities;
 
+console.log(`Clustered Undirected graph with ${undirected1000.order} nodes and ${undirected1000.size} edges.`);
+console.log();
+
 console.time('graphology undirected1000');
 communities = louvain(undirected1000);
 console.timeEnd('graphology undirected1000');
@@ -124,6 +127,9 @@ console.log();
 
 //---
 console.log('---')
+console.log();
+
+console.log(`EuroSIS Directed graph with ${euroSis.order} nodes and ${euroSis.size} edges.`);
 console.log();
 
 console.time('graphology euroSis');
@@ -155,6 +161,9 @@ console.log();
 console.log('---')
 console.log();
 
+console.log(`Big Undirected graph with ${bigGraph.order} nodes and ${bigGraph.size} edges.`);
+console.log();
+
 console.time('graphology bigGraph');
 communities = louvain(bigGraph);
 console.timeEnd('graphology bigGraph');
@@ -164,6 +173,8 @@ console.log('Modularity', modularity(bigGraph, {communities}));
 console.log();
 
 // NOTE: too slow to finish in time
+console.log('jLouvain is too slow...');
+console.log();
 // console.time('jlouvain bigGraph');
 // communities = jLouvain()
 //   .nodes(bigGraphNodeData)
