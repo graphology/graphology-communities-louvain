@@ -56,7 +56,7 @@
     "seedrandom": "^3.0.5"
   },
   "dependencies": {
-    "graphology-indices": "^0.6.4",
+    "graphology-indices": "^0.6.5",
     "graphology-types": "^0.16.0",
     "graphology-utils": "^1.7.0",
     "lodash": "^4.17.15",
