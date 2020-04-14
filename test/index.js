@@ -83,6 +83,7 @@ function dumpToImage(graph, communities) {
 function printReport(result) {
   console.log('Q =', result.modularity);
   console.log('Level =', result.level);
+  console.log('Resolution =', result.resolution);
   console.log('Communities =', result.count);
   console.log('Delta Computations =', result.deltaComputations);
   console.log('Nodes visited =', result.nodesVisited);
@@ -109,7 +110,7 @@ var undirectedEuroSis = toUndirected(euroSis);
 describe('graphology-communities-louvain', function() {
 
   // High timeout
-  this.timeout(2 * 1000);
+  this.timeout(30 * 1000);
 
   it('should throw when given invalid arguments.', function() {
 
@@ -263,5 +264,15 @@ describe('graphology-communities-louvain', function() {
 
     assert.strictEqual(result.count, 18);
     assert.closeTo(result.modularity, 0.7411, 0.0001);
+  });
+
+  it('should be possible to tweak resolution.', function() {
+    var result = louvain.detailed(undirected1000.graph, {
+      resolution: 3
+    });
+
+    assert.strictEqual(result.resolution, 3);
+    assert.strictEqual(result.count, 35);
+    assert.closeTo(result.modularity, 0.1790, 0.0001);
   });
 });

@@ -61,6 +61,7 @@ var details = louvain.detailed(graph);
   * **deltaComputation** *?string* [`fast|original`]: what computation method to use: `original` for Louvain's paper method, `fast` for a simplified but equivalent version or `true` for applying true modularity delta formula. `fast` and `true` only work for the undirected version right now.
   * **fastLocalMoves** *?boolean* [`true`]: whether to use a well-known optimization relying on a queue set to traverse the graph more efficiently.
   * **randomWalk** *?boolean* [`true`]: whether to traverse the graph randomly.
+  * **resolution** *?number* [`1`]: resolution parameter. An increased resolution should produce more communities.
   * **rng** *?function* [`Math.random`]: RNG function to use for `randomWalk`. Useful if you need to seed your rng using, for instance, [seedrandom](https://www.npmjs.com/package/seedrandom).
   * **weighted** *?boolean* [`false`]: whether to take edge weights into account.
 

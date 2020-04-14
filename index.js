@@ -180,6 +180,7 @@ function undirectedLouvain(detailed, graph, options) {
       weight: options.attributes.weight
     },
     keepDendrogram: detailed,
+    resolution: options.resolution,
     weighted: options.weighted
   });
 
@@ -465,6 +466,7 @@ function directedLouvain(detailed, graph, options) {
       weight: options.attributes.weight
     },
     keepDendrogram: detailed,
+    resolution: options.resolution,
     weighted: options.weighted
   });
 
