@@ -10,6 +10,11 @@
  * Proc. Natl. Acad. Sci. USA, vol. 103, no 23,‎ 2006, p. 8577–8582
  * https://dx.doi.org/10.1073%2Fpnas.0601602103
  *
+ * Newman, M. E. J. « Community detection in networks: Modularity optimization
+ * and maximum likelihood are equivalent ». Physical Review E, vol. 94, no 5,
+ * novembre 2016, p. 052315. arXiv.org, doi:10.1103/PhysRevE.94.052315.
+ * https://arxiv.org/pdf/1606.02319.pdf
+ *
  * Blondel, Vincent D., et al. « Fast unfolding of communities in large
  * networks ». Journal of Statistical Mechanics: Theory and Experiment,
  * vol. 2008, no 10, octobre 2008, p. P10008. DOI.org (Crossref),
