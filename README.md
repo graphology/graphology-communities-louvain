@@ -71,3 +71,64 @@ var details = louvain.detailed(graph);
 * **modularity** [`number`]: final modularity of the graph given the found partition.
 * **moves** [`array`]: array of array of number of moves if `fastLocalMoves` was false or array of number of moves if `fastLocalMoves` was true.
 * **nodesVisited** [`number`]: number of times nodes were visited.
+
+## Benchmark
+
+To run the benchmark:
+
+```
+npm install --no-save ngraph.louvain.native
+node benchmark/comparison.js
+```
+
+```
+Clustered Undirected graph with 1000 nodes and 9724 edges.
+
+graphology undirected1000: 56.898ms
+Communities 8
+Modularity 0.43022131098025784
+
+jlouvain undirected1000: 2592.024ms
+Communities 8
+Modularity 0.4302331134880074
+
+ngraph.louvain undirected1000: 78.188ms
+Communities 8
+
+ngraph.louvain.native undirected1000: 45.867ms
+Communities 7
+
+---
+
+EuroSIS Directed graph with 1285 nodes and 7524 edges.
+
+graphology euroSis: 43.606ms
+Communities 19
+Modularity 0.7384815869034789
+
+jlouvain euroSis: 1716.894ms
+Communities 23
+Modularity 0.7376116434498033
+
+ngraph euroSis: 45.982ms
+Communities 16
+
+ngraph.native euroSis: 21.907ms
+Communities 16
+
+---
+
+Big Undirected graph with 50000 nodes and 994631 edges.
+
+graphology bigGraph: 1114.216ms
+Communities 43
+Modularity 0.48304555149107353
+
+jLouvain is too slow...
+
+ngraph bigGraph: 8799.085ms
+Communities 42
+
+ngraph.native bigGraph: 8084.948ms
+Communities 1
+```
