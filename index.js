@@ -52,7 +52,7 @@ var DEFAULTS = {
     community: 'community',
     weight: 'weight'
   },
-  deltaComputation: 'original',
+  deltaComputation: 'fast',
   fastLocalMoves: true,
   randomWalk: true,
   rng: Math.random,
@@ -170,6 +170,8 @@ var DIRECTED_DELTAS = {
     );
   }
 };
+
+DIRECTED_DELTAS.fast = DIRECTED_DELTAS.original;
 
 function undirectedLouvain(detailed, graph, options) {
   var index = new UndirectedLouvainIndex(graph, {
