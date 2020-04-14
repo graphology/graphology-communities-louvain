@@ -272,7 +272,15 @@ describe('graphology-communities-louvain', function() {
     });
 
     assert.strictEqual(result.resolution, 3);
-    assert.strictEqual(result.count, 35);
-    assert.closeTo(result.modularity, 0.1790, 0.0001);
+    assert.strictEqual(result.count, 29);
+    assert.closeTo(result.modularity, 0.1940, 0.0001);
+
+    result = louvain.detailed(undirected1000.graph, {
+      resolution: 0.5
+    });
+
+    assert.strictEqual(result.resolution, 0.5);
+    assert.strictEqual(result.count, 2);
+    assert.closeTo(result.modularity, 0.5065, 0.0001);
   });
 });
