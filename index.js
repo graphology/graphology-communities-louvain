@@ -55,6 +55,7 @@ var DEFAULTS = {
   deltaComputation: 'fast',
   fastLocalMoves: true,
   randomWalk: true,
+  resolution: 1,
   rng: Math.random,
   weighted: false
 };
@@ -785,14 +786,19 @@ function directedLouvain(detailed, graph, options) {
 /**
  * Function returning the communities mapping of the graph.
  *
- * @param  {boolean} assign        - Assign communities to nodes attributes?
- * @param  {boolean} detailed      - Whether to return detailed information.
- * @param  {Graph}   graph         - Target graph.
- * @param  {object}  options       - Options:
- * @param  {object}    attributes  - Attribute names:
- * @param  {string}      community - Community node attribute name.
- * @param  {string}      weight    - Weight edge attribute name.
- * @param  {boolean}   weighted    - Whether to compute the weighted version.
+ * @param  {boolean} assign             - Assign communities to nodes attributes?
+ * @param  {boolean} detailed           - Whether to return detailed information.
+ * @param  {Graph}   graph              - Target graph.
+ * @param  {object}  options            - Options:
+ * @param  {object}    attributes         - Attribute names:
+ * @param  {string}      community          - Community node attribute name.
+ * @param  {string}      weight             - Weight edge attribute name.
+ * @param  {string}    deltaComputation   - Method to use to compute delta computations.
+ * @param  {boolean}   fastLocalMoves     - Whether to use the fast local move optimization.
+ * @param  {boolean}   randomWalk         - Whether to traverse the graph in random order.
+ * @param  {number}    resolution         - Resolution parameter.
+ * @param  {function}  rng                - RNG function to use.
+ * @param  {boolean}   weighted           - Whether to compute the weighted version.
  * @return {object}
  */
 function louvain(assign, detailed, graph, options) {
@@ -837,7 +843,8 @@ function louvain(assign, detailed, graph, options) {
     level: index.level,
     modularity: index.modularity(),
     moves: results.moves,
-    nodesVisited: results.nodesVisited
+    nodesVisited: results.nodesVisited,
+    resolution: options.resolution
   };
 
   if (assign) {

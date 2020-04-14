@@ -12,6 +12,7 @@ export type LouvainOptions = {
   deltaComputation: 'original' | 'true' | 'fast',
   fastLocalMoves: boolean,
   randomWalk: boolean,
+  resolution: number,
   rng: RNGFunction,
   weighted: boolean
 };
@@ -25,7 +26,8 @@ export type DetailedLouvainOutput = {
   dendrogram: Array<PointerArray>;
   modularity: number,
   moves: Array<Array<number>> | Array<number>,
-  nodesVisited: number
+  nodesVisited: number,
+  resolution: number
 };
 
 declare const louvain: {
