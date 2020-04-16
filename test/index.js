@@ -132,12 +132,14 @@ describe('graphology-communities-louvain', function() {
 
       louvain(graph);
     });
+  });
 
-    // Empty graph
-    assert.throws(function() {
-      var graph = emptyGraph(Graph.UndirectedGraph, 10);
-      louvain(graph);
-    }, /empty/);
+  it('should return a singleton partition on empty graphs.', function() {
+    var graph = emptyGraph(Graph.UndirectedGraph, 5);
+
+    var communities = louvain(graph);
+
+    assert.deepEqual(communities, {0: 0, 1: 1, 2: 2, 3: 3, 4: 4});
   });
 
   it('should work with multiple connected components.', function() {

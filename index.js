@@ -810,9 +810,6 @@ function louvain(assign, detailed, graph, options) {
   if (graph.multi)
     throw new Error('graphology-communities-louvain: cannot run the algorithm on a multi graph. Cast it to a simple one before (graphology-operators/to-simple).');
 
-  if (graph.size === 0)
-    throw new Error('graphology-communities-louvain: cannot run the algorithm on an empty graph.');
-
   var type = inferType(graph);
 
   if (type === 'mixed')
@@ -820,6 +817,40 @@ function louvain(assign, detailed, graph, options) {
 
   // Attributes name
   options = defaults({}, options, DEFAULTS);
+
+  // Empty graph case
+  var c = 0;
+
+  if (graph.size === 0) {
+    if (assign) {
+      graph.forEachNode(function(node) {
+        graph.setNodeAttribute(node, options.attributes.communities, c++);
+      });
+
+      return;
+    }
+
+    var communities = {};
+
+    graph.forEachNode(function(node) {
+      communities[node] = c++;
+    });
+
+    if (!detailed)
+      return communities;
+
+    return {
+      communities: communities,
+      count: graph.order,
+      deltaComputations: 0,
+      dendrogram: null,
+      level: 0,
+      modularity: NaN,
+      moves: null,
+      nodesVisited: 0,
+      resolution: options.resolution
+    };
+  }
 
   var fn = type === 'undirected' ? undirectedLouvain : directedLouvain;
 
