@@ -321,8 +321,6 @@ function undirectedLouvain(detailed, graph, options) {
           index.move(
             i,
             degree,
-            communities.get(currentCommunity) || 0,
-            communities.get(bestCommunity) || 0,
             bestCommunity
           );
 
@@ -432,8 +430,6 @@ function undirectedLouvain(detailed, graph, options) {
             index.move(
               i,
               degree,
-              communities.get(currentCommunity) || 0,
-              communities.get(bestCommunity) || 0,
               bestCommunity
             );
           }
@@ -627,10 +623,6 @@ function directedLouvain(detailed, graph, options) {
             i,
             inDegree,
             outDegree,
-            communitiesIn.get(currentCommunity) || 0,
-            communitiesOut.get(currentCommunity) || 0,
-            communitiesIn.get(bestCommunity) || 0,
-            communitiesOut.get(bestCommunity) || 0,
             bestCommunity
           );
 
@@ -755,10 +747,6 @@ function directedLouvain(detailed, graph, options) {
               i,
               inDegree,
               outDegree,
-              communitiesIn.get(currentCommunity) || 0,
-              communitiesOut.get(currentCommunity) || 0,
-              communitiesIn.get(bestCommunity) || 0,
-              communitiesOut.get(bestCommunity) || 0,
               bestCommunity
             );
           }
