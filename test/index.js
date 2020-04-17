@@ -243,7 +243,7 @@ describe('graphology-communities-louvain', function() {
     });
 
     assert.strictEqual(result.count, 17);
-    assert.closeTo(result.modularity, 0.7273, 0.0001);
+    assert.closeTo(result.modularity, 0.7264, 0.0001);
   });
 
   it('should be possible to use fast local moves in the undirected case.', function() {
@@ -274,8 +274,8 @@ describe('graphology-communities-louvain', function() {
     });
 
     assert.strictEqual(result.resolution, 3);
-    assert.strictEqual(result.count, 29);
-    assert.closeTo(result.modularity, 0.1940, 0.0001);
+    assert.strictEqual(result.count, 31);
+    assert.closeTo(result.modularity, 0.1945, 0.0001);
 
     result = louvain.detailed(undirected1000.graph, {
       resolution: 0.5
@@ -283,6 +283,6 @@ describe('graphology-communities-louvain', function() {
 
     assert.strictEqual(result.resolution, 0.5);
     assert.strictEqual(result.count, 2);
-    assert.closeTo(result.modularity, 0.5065, 0.0001);
+    assert.closeTo(result.modularity, 0.5072, 0.0001);
   });
 });

@@ -193,7 +193,7 @@ function undirectedLouvain(detailed, graph, options) {
       localMoveWasMade = true;
 
   // Communities
-  var currentCommunity, targetCommunity;
+  var currentCommunity, targetCommunity, singletonCommunity;
   var communities = new SparseMap(Float64Array, index.C);
 
   // Traversal
@@ -378,24 +378,35 @@ function undirectedLouvain(detailed, graph, options) {
             addWeightToCommunity(communities, targetCommunity, weight);
           }
 
+          singletonCommunity = index.isolate(i, degree);
+
+          if (singletonCommunity !== currentCommunity)
+            communities.set(singletonCommunity, 0);
+
           // Finding best community to move to
-          bestDelta = 0;
+          bestDelta = index.fastDelta(
+            i,
+            degree,
+            communities.get(currentCommunity) || 0,
+            currentCommunity
+          );
           bestCommunity = currentCommunity;
 
           for (ci = 0; ci < communities.size; ci++) {
             targetCommunity = communities.dense[ci];
+
+            if (targetCommunity === currentCommunity)
+              continue;
+
             targetCommunityDegree = communities.vals[ci];
 
             deltaComputations++;
 
-            delta = deltaComputation(
-              index,
+            delta = index.fastDelta(
               i,
               degree,
-              currentCommunity,
               targetCommunityDegree,
-              targetCommunity,
-              communities
+              targetCommunity
             );
 
             // NOTE: tie breaker here for better determinism
@@ -419,13 +430,17 @@ function undirectedLouvain(detailed, graph, options) {
             }
           }
 
-          // Should we move the node into a different community?
+          // Should we move the node back into its community or into a
+          // different community?
           if (
-            bestDelta > 0 &&
-            bestCommunity !== currentCommunity
+            (bestDelta > 0 && bestCommunity !== singletonCommunity) ||
+            bestCommunity === currentCommunity
           ) {
-            localMoveWasMade = true;
-            currentMoves++;
+
+            if (bestCommunity !== currentCommunity) {
+              localMoveWasMade = true;
+              currentMoves++;
+            }
 
             index.move(
               i,
