@@ -217,8 +217,10 @@ function undirectedLouvain(detailed, graph, options) {
 
         // Should we move the node back into its community or into a
         // different community?
-        if (bestCommunity === currentCommunity || bestDelta <= 0)
-          index.move(i, degree, currentCommunity);
+        if (bestCommunity === currentCommunity || bestDelta <= 0) {
+          if (currentCommunity !== singletonCommunity)
+            index.move(i, degree, currentCommunity);
+        }
 
         else if (bestCommunity !== singletonCommunity)
           index.move(i, degree, bestCommunity);
@@ -335,8 +337,10 @@ function undirectedLouvain(detailed, graph, options) {
 
           // Should we move the node back into its community or into a
           // different community?
-          if (bestCommunity === currentCommunity || bestDelta <= 0)
-            index.move(i, degree, currentCommunity);
+          if (bestCommunity === currentCommunity || bestDelta <= 0) {
+            if (currentCommunity !== singletonCommunity)
+              index.move(i, degree, currentCommunity);
+          }
 
           else if (bestCommunity !== singletonCommunity)
             index.move(i, degree, bestCommunity);
@@ -527,8 +531,10 @@ function directedLouvain(detailed, graph, options) {
 
         // Should we move the node back into its community or into a
         // different community?
-        if (bestCommunity === currentCommunity || bestDelta <= 0)
-          index.move(i, inDegree, outDegree, currentCommunity);
+        if (bestCommunity === currentCommunity || bestDelta <= 0) {
+          if (currentCommunity !== singletonCommunity)
+            index.move(i, inDegree, outDegree, currentCommunity);
+        }
 
         else if (bestCommunity !== singletonCommunity)
           index.move(i, inDegree, outDegree, bestCommunity);
@@ -654,8 +660,10 @@ function directedLouvain(detailed, graph, options) {
 
           // Should we move the node back into its community or into a
           // different community?
-          if (bestCommunity === currentCommunity || bestDelta <= 0)
-            index.move(i, inDegree, outDegree, currentCommunity);
+          if (bestCommunity === currentCommunity || bestDelta <= 0) {
+            if (currentCommunity !== singletonCommunity)
+              index.move(i, inDegree, outDegree, currentCommunity);
+          }
 
           else if (bestCommunity !== singletonCommunity)
             index.move(i, inDegree, outDegree, bestCommunity);
