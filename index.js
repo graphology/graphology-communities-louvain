@@ -52,7 +52,6 @@ var DEFAULTS = {
     community: 'community',
     weight: 'weight'
   },
-  deltaComputation: 'fast',
   fastLocalMoves: true,
   randomWalk: true,
   resolution: 1,
@@ -70,38 +69,6 @@ function addWeightToCommunity(map, community, weight) {
 
   map.set(community, currentWeight);
 }
-
-var DIRECTED_DELTAS = {
-  original: function(
-    index,
-    i,
-    inDegree,
-    outDegree,
-    currentCommunity,
-    targetCommunityDegree,
-    targetCommunity
-  ) {
-    if (targetCommunity === currentCommunity) {
-      return index.deltaWithOwnCommunity(
-        i,
-        inDegree,
-        outDegree,
-        targetCommunityDegree,
-        targetCommunity
-      );
-    }
-
-    return index.delta(
-      i,
-      inDegree,
-      outDegree,
-      targetCommunityDegree,
-      targetCommunity
-    );
-  }
-};
-
-DIRECTED_DELTAS.fast = DIRECTED_DELTAS.original;
 
 function undirectedLouvain(detailed, graph, options) {
   var index = new UndirectedLouvainIndex(graph, {
@@ -250,33 +217,27 @@ function undirectedLouvain(detailed, graph, options) {
 
         // Should we move the node back into its community or into a
         // different community?
-        if (
-          (bestDelta > 0 && bestCommunity !== singletonCommunity) ||
-          bestCommunity === currentCommunity
-        ) {
+        if (bestCommunity === currentCommunity || bestDelta <= 0)
+          index.move(i, degree, currentCommunity);
 
-          if (bestCommunity !== currentCommunity) {
-            moveWasMade = true;
-            currentMoves++;
+        else if (bestCommunity !== singletonCommunity)
+          index.move(i, degree, bestCommunity);
 
-            // Adding neighbors from other communities to the queue
-            start = index.starts[i];
-            end = index.starts[i + 1];
+        if (bestDelta > 0 && bestCommunity !== currentCommunity) {
+          moveWasMade = true;
+          currentMoves++;
 
-            for (; start < end; start++) {
-              j = index.neighborhood[start];
-              targetCommunity = index.belongings[j];
+          // Adding neighbors from other communities to the queue
+          start = index.starts[i];
+          end = index.starts[i + 1];
 
-              if (targetCommunity !== bestCommunity)
-                queue.enqueue(j);
-            }
+          for (; start < end; start++) {
+            j = index.neighborhood[start];
+            targetCommunity = index.belongings[j];
+
+            if (targetCommunity !== bestCommunity)
+              queue.enqueue(j);
           }
-
-          index.move(
-            i,
-            degree,
-            bestCommunity
-          );
         }
       }
 
@@ -374,21 +335,15 @@ function undirectedLouvain(detailed, graph, options) {
 
           // Should we move the node back into its community or into a
           // different community?
-          if (
-            (bestDelta > 0 && bestCommunity !== singletonCommunity) ||
-            bestCommunity === currentCommunity
-          ) {
+          if (bestCommunity === currentCommunity || bestDelta <= 0)
+            index.move(i, degree, currentCommunity);
 
-            if (bestCommunity !== currentCommunity) {
-              localMoveWasMade = true;
-              currentMoves++;
-            }
+          else if (bestCommunity !== singletonCommunity)
+            index.move(i, degree, bestCommunity);
 
-            index.move(
-              i,
-              degree,
-              bestCommunity
-            );
+          if (bestDelta > 0 && bestCommunity !== currentCommunity) {
+            localMoveWasMade = true;
+            currentMoves++;
           }
         }
 
@@ -423,8 +378,6 @@ function directedLouvain(detailed, graph, options) {
     weighted: options.weighted
   });
 
-  var deltaComputation = DIRECTED_DELTAS[options.deltaComputation];
-
   var randomIndex = createRandomIndex(options.rng);
 
   // State variables
@@ -432,10 +385,8 @@ function directedLouvain(detailed, graph, options) {
       localMoveWasMade = true;
 
   // Communities
-  var currentCommunity, targetCommunity;
+  var currentCommunity, targetCommunity, singletonCommunity;
   var communities = new SparseMap(Float64Array, index.C);
-  var communitiesIn = new SparseMap(Float64Array, index.C);
-  var communitiesOut = new SparseMap(Float64Array, index.C);
 
   // Traversal
   var queue,
@@ -496,8 +447,6 @@ function directedLouvain(detailed, graph, options) {
         inDegree = 0;
         outDegree = 0;
         communities.clear();
-        communitiesIn.clear();
-        communitiesOut.clear();
 
         currentCommunity = index.belongings[i];
 
@@ -514,37 +463,45 @@ function directedLouvain(detailed, graph, options) {
           targetCommunity = index.belongings[j];
 
           // Incrementing metrics
-          if (out) {
+          if (out)
             outDegree += weight;
-            addWeightToCommunity(communitiesOut, targetCommunity, weight);
-          }
-          else {
+          else
             inDegree += weight;
-            addWeightToCommunity(communitiesIn, targetCommunity, weight);
-          }
 
           addWeightToCommunity(communities, targetCommunity, weight);
         }
 
+        singletonCommunity = index.isolate(i, inDegree, outDegree);
+
+        if (singletonCommunity !== currentCommunity)
+          communities.set(singletonCommunity, 0);
+
         // Finding best community to move to
-        bestDelta = 0;
+        bestDelta = index.delta(
+          i,
+          inDegree,
+          outDegree,
+          communities.get(currentCommunity) || 0,
+          currentCommunity
+        );
         bestCommunity = currentCommunity;
 
         for (ci = 0; ci < communities.size; ci++) {
           targetCommunity = communities.dense[ci];
+
+          if (targetCommunity === currentCommunity)
+            continue;
+
           targetCommunityDegree = communities.vals[ci];
 
           deltaComputations++;
 
-          delta = deltaComputation(
-            index,
+          delta = index.delta(
             i,
             inDegree,
             outDegree,
-            currentCommunity,
             targetCommunityDegree,
-            targetCommunity,
-            communities
+            targetCommunity
           );
 
           // NOTE: tie breaker here for better determinism
@@ -568,20 +525,17 @@ function directedLouvain(detailed, graph, options) {
           }
         }
 
-        // Should we move the node into a different community?
-        if (
-          bestDelta > 0 &&
-          bestCommunity !== currentCommunity
-        ) {
+        // Should we move the node back into its community or into a
+        // different community?
+        if (bestCommunity === currentCommunity || bestDelta <= 0)
+          index.move(i, inDegree, outDegree, currentCommunity);
+
+        else if (bestCommunity !== singletonCommunity)
+          index.move(i, inDegree, outDegree, bestCommunity);
+
+        if (bestDelta > 0 && bestCommunity !== currentCommunity) {
           moveWasMade = true;
           currentMoves++;
-
-          index.move(
-            i,
-            inDegree,
-            outDegree,
-            bestCommunity
-          );
 
           // Adding neighbors from other communities to the queue
           start = index.starts[i];
@@ -620,8 +574,6 @@ function directedLouvain(detailed, graph, options) {
           inDegree = 0;
           outDegree = 0;
           communities.clear();
-          communitiesIn.clear();
-          communitiesOut.clear();
 
           currentCommunity = index.belongings[i];
 
@@ -638,37 +590,45 @@ function directedLouvain(detailed, graph, options) {
             targetCommunity = index.belongings[j];
 
             // Incrementing metrics
-            if (out) {
+            if (out)
               outDegree += weight;
-              addWeightToCommunity(communitiesOut, targetCommunity, weight);
-            }
-            else {
+            else
               inDegree += weight;
-              addWeightToCommunity(communitiesIn, targetCommunity, weight);
-            }
 
             addWeightToCommunity(communities, targetCommunity, weight);
           }
 
+          singletonCommunity = index.isolate(i, inDegree, outDegree);
+
+          if (singletonCommunity !== currentCommunity)
+            communities.set(singletonCommunity, 0);
+
           // Finding best community to move to
-          bestDelta = 0;
+          bestDelta = index.delta(
+            i,
+            inDegree,
+            outDegree,
+            communities.get(currentCommunity) || 0,
+            currentCommunity
+          );
           bestCommunity = currentCommunity;
 
           for (ci = 0; ci < communities.size; ci++) {
             targetCommunity = communities.dense[ci];
+
+            if (targetCommunity === currentCommunity)
+              continue;
+
             targetCommunityDegree = communities.vals[ci];
 
             deltaComputations++;
 
-            delta = deltaComputation(
-              index,
+            delta = index.delta(
               i,
               inDegree,
               outDegree,
-              currentCommunity,
               targetCommunityDegree,
-              targetCommunity,
-              communities
+              targetCommunity
             );
 
             // NOTE: tie breaker here for better determinism
@@ -692,20 +652,17 @@ function directedLouvain(detailed, graph, options) {
             }
           }
 
-          // Should we move the node into a different community?
-          if (
-            bestDelta > 0 &&
-            bestCommunity !== currentCommunity
-          ) {
+          // Should we move the node back into its community or into a
+          // different community?
+          if (bestCommunity === currentCommunity || bestDelta <= 0)
+            index.move(i, inDegree, outDegree, currentCommunity);
+
+          else if (bestCommunity !== singletonCommunity)
+            index.move(i, inDegree, outDegree, bestCommunity);
+
+          if (bestDelta > 0 && bestCommunity !== currentCommunity) {
             localMoveWasMade = true;
             currentMoves++;
-
-            index.move(
-              i,
-              inDegree,
-              outDegree,
-              bestCommunity
-            );
           }
         }
 

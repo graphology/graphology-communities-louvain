@@ -58,7 +58,6 @@ var details = louvain.detailed(graph);
   * **attributes** *?object*: attributes' names:
     * **weight** *?string* [`weight`]: name of the edges' weight attribute.
     * **community** *?string* [`community`]: name of the community attribute.
-  * **deltaComputation** *?string* [`fast|original`]: what computation method to use: `original` for Louvain's paper method, `fast` for a simplified but equivalent version or `true` for applying true modularity delta formula. `fast` and `true` only work for the undirected version right now.
   * **fastLocalMoves** *?boolean* [`true`]: whether to use a well-known optimization relying on a queue set to traverse the graph more efficiently.
   * **randomWalk** *?boolean* [`true`]: whether to traverse the graph randomly.
   * **resolution** *?number* [`1`]: resolution parameter. An increased resolution should produce more communities.
@@ -87,51 +86,51 @@ node benchmark/comparison.js
 ```
 Clustered Undirected graph with 1000 nodes and 9724 edges.
 
-graphology undirected1000: 56.898ms
+graphology undirected1000: 52.732ms
 Communities 8
-Modularity 0.43022131098025784
+Modularity 0.42944314393593924
 
-jlouvain undirected1000: 2592.024ms
+jlouvain undirected1000: 2368.053ms
 Communities 8
 Modularity 0.4302331134880074
 
-ngraph.louvain undirected1000: 78.188ms
+ngraph.louvain undirected1000: 71.108ms
 Communities 8
 
-ngraph.louvain.native undirected1000: 45.867ms
+ngraph.louvain.native undirected1000: 39.185ms
 Communities 7
 
 ---
 
 EuroSIS Directed graph with 1285 nodes and 7524 edges.
 
-graphology euroSis: 43.606ms
+graphology euroSis: 30.809ms
 Communities 19
-Modularity 0.7384815869034789
+Modularity 0.7375260763995757
 
-jlouvain euroSis: 1716.894ms
+jlouvain euroSis: 1310.008ms
 Communities 23
 Modularity 0.7376116434498033
 
-ngraph euroSis: 45.982ms
+ngraph euroSis: 38.262ms
 Communities 16
 
-ngraph.native euroSis: 21.907ms
+ngraph.native euroSis: 20.018ms
 Communities 16
 
 ---
 
-Big Undirected graph with 50000 nodes and 994631 edges.
+Big Undirected graph with 50000 nodes and 994713 edges.
 
-graphology bigGraph: 1114.216ms
+graphology bigGraph: 937.942ms
 Communities 43
-Modularity 0.48304555149107353
+Modularity 0.481431448861252
 
 jLouvain is too slow...
 
-ngraph bigGraph: 8799.085ms
-Communities 42
+ngraph bigGraph: 7783.050ms
+Communities 44
 
-ngraph.native bigGraph: 8084.948ms
+ngraph.native bigGraph: 8415.692ms
 Communities 1
 ```
