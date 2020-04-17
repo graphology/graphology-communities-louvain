@@ -71,77 +71,6 @@ function addWeightToCommunity(map, community, weight) {
   map.set(community, currentWeight);
 }
 
-var UNDIRECTED_DELTAS = {
-  original: function(
-    index,
-    i,
-    degree,
-    currentCommunity,
-    targetCommunityDegree,
-    targetCommunity
-  ) {
-    if (targetCommunity === currentCommunity) {
-      return index.deltaWithOwnCommunity(
-        i,
-        degree,
-        targetCommunityDegree,
-        targetCommunity
-      );
-    }
-
-    return index.delta(
-      i,
-      degree,
-      targetCommunityDegree,
-      targetCommunity
-    );
-  },
-  fast: function(
-    index,
-    i,
-    degree,
-    currentCommunity,
-    targetCommunityDegree,
-    targetCommunity
-  ) {
-    if (targetCommunity === currentCommunity) {
-      return index.fastDeltaWithOwnCommunity(
-        i,
-        degree,
-        targetCommunityDegree,
-        targetCommunity
-      );
-    }
-
-    return index.fastDelta(
-      i,
-      degree,
-      targetCommunityDegree,
-      targetCommunity
-    );
-  },
-  true: function(
-    index,
-    i,
-    degree,
-    currentCommunity,
-    targetCommunityDegree,
-    targetCommunity,
-    communities
-  ) {
-    if (targetCommunity === currentCommunity)
-      return 0;
-
-    return index.trueDelta(
-      i,
-      degree,
-      communities.get(currentCommunity) || 0,
-      targetCommunityDegree,
-      targetCommunity
-    );
-  }
-};
-
 var DIRECTED_DELTAS = {
   original: function(
     index,
@@ -183,8 +112,6 @@ function undirectedLouvain(detailed, graph, options) {
     resolution: options.resolution,
     weighted: options.weighted
   });
-
-  var deltaComputation = UNDIRECTED_DELTAS[options.deltaComputation];
 
   var randomIndex = createRandomIndex(options.rng);
 
@@ -269,24 +196,35 @@ function undirectedLouvain(detailed, graph, options) {
           addWeightToCommunity(communities, targetCommunity, weight);
         }
 
+        singletonCommunity = index.isolate(i, degree);
+
+        if (singletonCommunity !== currentCommunity)
+          communities.set(singletonCommunity, 0);
+
         // Finding best community to move to
-        bestDelta = 0;
+        bestDelta = index.fastDelta(
+          i,
+          degree,
+          communities.get(currentCommunity) || 0,
+          currentCommunity
+        );
         bestCommunity = currentCommunity;
 
         for (ci = 0; ci < communities.size; ci++) {
           targetCommunity = communities.dense[ci];
+
+          if (targetCommunity === currentCommunity)
+            continue;
+
           targetCommunityDegree = communities.vals[ci];
 
           deltaComputations++;
 
-          delta = deltaComputation(
-            index,
+          delta = index.fastDelta(
             i,
             degree,
-            currentCommunity,
             targetCommunityDegree,
-            targetCommunity,
-            communities
+            targetCommunity
           );
 
           // NOTE: tie breaker here for better determinism
@@ -310,31 +248,35 @@ function undirectedLouvain(detailed, graph, options) {
           }
         }
 
-        // Should we move the node into a different community?
+        // Should we move the node back into its community or into a
+        // different community?
         if (
-          bestDelta > 0 &&
-          bestCommunity !== currentCommunity
+          (bestDelta > 0 && bestCommunity !== singletonCommunity) ||
+          bestCommunity === currentCommunity
         ) {
-          moveWasMade = true;
-          currentMoves++;
+
+          if (bestCommunity !== currentCommunity) {
+            moveWasMade = true;
+            currentMoves++;
+
+            // Adding neighbors from other communities to the queue
+            start = index.starts[i];
+            end = index.starts[i + 1];
+
+            for (; start < end; start++) {
+              j = index.neighborhood[start];
+              targetCommunity = index.belongings[j];
+
+              if (targetCommunity !== bestCommunity)
+                queue.enqueue(j);
+            }
+          }
 
           index.move(
             i,
             degree,
             bestCommunity
           );
-
-          // Adding neighbors from other communities to the queue
-          start = index.starts[i];
-          end = index.starts[i + 1];
-
-          for (; start < end; start++) {
-            j = index.neighborhood[start];
-            targetCommunity = index.belongings[j];
-
-            if (targetCommunity !== bestCommunity)
-              queue.enqueue(j);
-          }
         }
       }
 
