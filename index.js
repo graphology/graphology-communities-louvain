@@ -70,6 +70,20 @@ function addWeightToCommunity(map, community, weight) {
   map.set(community, currentWeight);
 }
 
+function tieBreaker(bestCommunity, currentCommunity, targetCommunity, delta, bestDelta) {
+  if (delta === bestDelta) {
+    if (bestCommunity === currentCommunity) {
+      return false;
+    }
+    else {
+      return targetCommunity > bestCommunity;
+    }
+  }
+  else if (delta > bestDelta) {
+    return true;
+  }
+}
+
 function undirectedLouvain(detailed, graph, options) {
   var index = new UndirectedLouvainIndex(graph, {
     attributes: {
@@ -194,20 +208,13 @@ function undirectedLouvain(detailed, graph, options) {
             targetCommunity
           );
 
-          // NOTE: tie breaker here for better determinism
-          deltaIsBetter = false;
-
-          if (delta === bestDelta) {
-            if (bestCommunity === currentCommunity) {
-              deltaIsBetter = false;
-            }
-            else {
-              deltaIsBetter = targetCommunity > bestCommunity;
-            }
-          }
-          else if (delta > bestDelta) {
-            deltaIsBetter = true;
-          }
+          deltaIsBetter = tieBreaker(
+            bestCommunity,
+            currentCommunity,
+            targetCommunity,
+            delta,
+            bestDelta
+          );
 
           if (deltaIsBetter) {
             bestDelta = delta;
@@ -314,20 +321,13 @@ function undirectedLouvain(detailed, graph, options) {
               targetCommunity
             );
 
-            // NOTE: tie breaker here for better determinism
-            deltaIsBetter = false;
-
-            if (delta === bestDelta) {
-              if (bestCommunity === currentCommunity) {
-                deltaIsBetter = false;
-              }
-              else {
-                deltaIsBetter = targetCommunity > bestCommunity;
-              }
-            }
-            else if (delta > bestDelta) {
-              deltaIsBetter = true;
-            }
+            deltaIsBetter = tieBreaker(
+              bestCommunity,
+              currentCommunity,
+              targetCommunity,
+              delta,
+              bestDelta
+            );
 
             if (deltaIsBetter) {
               bestDelta = delta;
@@ -508,20 +508,13 @@ function directedLouvain(detailed, graph, options) {
             targetCommunity
           );
 
-          // NOTE: tie breaker here for better determinism
-          deltaIsBetter = false;
-
-          if (delta === bestDelta) {
-            if (bestCommunity === currentCommunity) {
-              deltaIsBetter = false;
-            }
-            else {
-              deltaIsBetter = targetCommunity > bestCommunity;
-            }
-          }
-          else if (delta > bestDelta) {
-            deltaIsBetter = true;
-          }
+          deltaIsBetter = tieBreaker(
+            bestCommunity,
+            currentCommunity,
+            targetCommunity,
+            delta,
+            bestDelta
+          );
 
           if (deltaIsBetter) {
             bestDelta = delta;
@@ -637,20 +630,13 @@ function directedLouvain(detailed, graph, options) {
               targetCommunity
             );
 
-            // NOTE: tie breaker here for better determinism
-            deltaIsBetter = false;
-
-            if (delta === bestDelta) {
-              if (bestCommunity === currentCommunity) {
-                deltaIsBetter = false;
-              }
-              else {
-                deltaIsBetter = targetCommunity > bestCommunity;
-              }
-            }
-            else if (delta > bestDelta) {
-              deltaIsBetter = true;
-            }
+            deltaIsBetter = tieBreaker(
+              bestCommunity,
+              currentCommunity,
+              targetCommunity,
+              delta,
+              bestDelta
+            );
 
             if (deltaIsBetter) {
               bestDelta = delta;
