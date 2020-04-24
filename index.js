@@ -709,7 +709,7 @@ function louvain(assign, detailed, graph, options) {
   var type = inferType(graph);
 
   if (type === 'mixed')
-    throw new Error('graphology-communities-louvain: cannor run the algorithm on a true mixed graph.');
+    throw new Error('graphology-communities-louvain: cannot run the algorithm on a true mixed graph.');
 
   // Attributes name
   options = defaults({}, options, DEFAULTS);
