@@ -5,15 +5,15 @@ type RNGFunction = () => number;
 type PointerArray = Uint8Array | Uint16Array | Uint32Array | Float64Array;
 
 export type LouvainOptions = {
-  attributes: {
-    community: 'community',
-    weight: 'weight'
+  attributes?: {
+    community?: 'community',
+    weight?: 'weight'
   },
-  fastLocalMoves: boolean,
-  randomWalk: boolean,
-  resolution: number,
-  rng: RNGFunction,
-  weighted: boolean
+  fastLocalMoves?: boolean,
+  randomWalk?: boolean,
+  resolution?: number,
+  rng?: RNGFunction,
+  weighted?: boolean
 };
 
 type LouvainMapping = {[key: string]: number};
