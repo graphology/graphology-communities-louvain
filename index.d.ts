@@ -6,8 +6,8 @@ type PointerArray = Uint8Array | Uint16Array | Uint32Array | Float64Array;
 
 export type LouvainOptions = {
   attributes?: {
-    community?: 'community',
-    weight?: 'weight'
+    community?: string,
+    weight?: string
   },
   fastLocalMoves?: boolean,
   randomWalk?: boolean,
