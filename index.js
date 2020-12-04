@@ -290,13 +290,8 @@ function undirectedLouvain(detailed, graph, options) {
             addWeightToCommunity(communities, targetCommunity, weight);
           }
 
-          singletonCommunity = index.isolate(i, degree);
-
-          if (singletonCommunity !== currentCommunity)
-            communities.set(singletonCommunity, 0);
-
           // Finding best community to move to
-          bestDelta = index.fastDelta(
+          bestDelta = index.fastDeltaWithOwnCommunity(
             i,
             degree,
             communities.get(currentCommunity) || 0,
@@ -335,17 +330,9 @@ function undirectedLouvain(detailed, graph, options) {
             }
           }
 
-          // Should we move the node back into its community or into a
-          // different community?
-          if (bestCommunity === currentCommunity || bestDelta <= 0) {
-            if (currentCommunity !== singletonCommunity)
-              index.move(i, degree, currentCommunity);
-          }
-
-          else if (bestCommunity !== singletonCommunity)
+          // Should we move the node?
+          if (bestCommunity !== currentCommunity) {
             index.move(i, degree, bestCommunity);
-
-          if (bestDelta > 0 && bestCommunity !== currentCommunity) {
             localMoveWasMade = true;
             currentMoves++;
           }
