@@ -254,7 +254,7 @@ describe('graphology-communities-louvain', function() {
     });
 
     assert.strictEqual(result.count, 18);
-    assert.closeTo(result.modularity, 0.7258, 0.0001);
+    assert.closeTo(result.modularity, 0.7275, 0.0001);
   });
 
   it('should be possible to use fast local moves in the directed case.', function() {

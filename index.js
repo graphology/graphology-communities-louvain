@@ -177,13 +177,8 @@ function undirectedLouvain(detailed, graph, options) {
           addWeightToCommunity(communities, targetCommunity, weight);
         }
 
-        singletonCommunity = index.isolate(i, degree);
-
-        if (singletonCommunity !== currentCommunity)
-          communities.set(singletonCommunity, 0);
-
         // Finding best community to move to
-        bestDelta = index.fastDelta(
+        bestDelta = index.fastDeltaWithOwnCommunity(
           i,
           degree,
           communities.get(currentCommunity) || 0,
@@ -222,17 +217,26 @@ function undirectedLouvain(detailed, graph, options) {
           }
         }
 
-        // Should we move the node back into its community or into a
-        // different community?
-        if (bestCommunity === currentCommunity || bestDelta <= 0) {
-          if (currentCommunity !== singletonCommunity)
-            index.move(i, degree, currentCommunity);
-        }
+        // Should we move the node?
+        if (bestDelta < 0 || bestCommunity !== currentCommunity) {
 
-        else if (bestCommunity !== singletonCommunity)
-          index.move(i, degree, bestCommunity);
+          // NOTE: this is to allow nodes to move back to their own singleton
+          // This code however only deals with modularity (e.g. the condition
+          // about bestDelta < 0, which is the delta for moving back to
+          // singleton wrt. modularity). Indeed, rarely, the Louvain
+          // algorithm can produce such cases when a node would be better in
+          // a singleton that in its own community when considering self loops
+          // or a resolution != 1. In this case, delta with your own community
+          // is indeed less than 0. To handle different metrics, one should
+          // consider computing the delta for going back to singleton because
+          // it might not be 0.
+          if (bestDelta < 0) {
+            index.isolate(i, degree);
+          }
+          else {
+            index.move(i, degree, bestCommunity);
+          }
 
-        if (bestDelta > 0 && bestCommunity !== currentCommunity) {
           moveWasMade = true;
           currentMoves++;
 
@@ -333,9 +337,16 @@ function undirectedLouvain(detailed, graph, options) {
           // Should we move the node?
           if (bestDelta < 0 || bestCommunity !== currentCommunity) {
 
-            // NOTE: this is to allow nodes to move back to its own singleton
-            // This only currently works for modularity and should be fairly
-            // rare when considering classic Louvain
+            // NOTE: this is to allow nodes to move back to their own singleton
+            // This code however only deals with modularity (e.g. the condition
+            // about bestDelta < 0, which is the delta for moving back to
+            // singleton wrt. modularity). Indeed, rarely, the Louvain
+            // algorithm can produce such cases when a node would be better in
+            // a singleton that in its own community when considering self loops
+            // or a resolution != 1. In this case, delta with your own community
+            // is indeed less than 0. To handle different metrics, one should
+            // consider computing the delta for going back to singleton because
+            // it might not be 0.
             if (bestDelta < 0) {
               index.isolate(i, degree);
             }
