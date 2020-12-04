@@ -331,8 +331,17 @@ function undirectedLouvain(detailed, graph, options) {
           }
 
           // Should we move the node?
-          if (bestCommunity !== currentCommunity) {
-            index.move(i, degree, bestCommunity);
+          if (bestDelta < 0 || bestCommunity !== currentCommunity) {
+
+            // NOTE: this is to allow nodes to move back to its own singleton
+            // This only currently works for modularity and should be fairly
+            // rare when considering classic Louvain
+            if (bestDelta < 0) {
+              index.isolate(i, degree);
+            }
+            else {
+              index.move(i, degree, bestCommunity);
+            }
             localMoveWasMade = true;
             currentMoves++;
           }
