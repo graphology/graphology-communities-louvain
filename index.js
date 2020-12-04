@@ -101,7 +101,7 @@ function undirectedLouvain(detailed, graph, options) {
       localMoveWasMade = true;
 
   // Communities
-  var currentCommunity, targetCommunity, singletonCommunity;
+  var currentCommunity, targetCommunity;
   var communities = new SparseMap(Float64Array, index.C);
 
   // Traversal
@@ -396,7 +396,7 @@ function directedLouvain(detailed, graph, options) {
       localMoveWasMade = true;
 
   // Communities
-  var currentCommunity, targetCommunity, singletonCommunity;
+  var currentCommunity, targetCommunity;
   var communities = new SparseMap(Float64Array, index.C);
 
   // Traversal
