@@ -721,9 +721,6 @@ function louvain(assign, detailed, graph, options) {
   if (!isGraph(graph))
     throw new Error('graphology-communities-louvain: the given graph is not a valid graphology instance.');
 
-  if (graph.multi)
-    throw new Error('graphology-communities-louvain: cannot run the algorithm on a multi graph. Cast it to a simple one before (graphology-operators/to-simple).');
-
   var type = inferType(graph);
 
   if (type === 'mixed')

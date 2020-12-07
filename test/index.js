@@ -119,11 +119,6 @@ describe('graphology-communities-louvain', function() {
       louvain(null);
     }, /graphology/);
 
-    // Multi graph
-    assert.throws(function() {
-      louvain(new Graph({multi: true}));
-    }, /multi/i);
-
     // True mixed graph
     assert.throws(function() {
       var graph = new Graph();
@@ -284,5 +279,52 @@ describe('graphology-communities-louvain', function() {
     assert.strictEqual(result.resolution, 0.5);
     assert.strictEqual(result.count, 2);
     assert.closeTo(result.modularity, 0.5072, 0.0001);
+  });
+
+  it('should work with a multi graph.', function() {
+    var graph = new Graph();
+
+    graph.mergeEdge(1, 2);
+    graph.mergeEdge(1, 3);
+    graph.mergeEdge(2, 3);
+
+    graph.mergeEdge(3, 4);
+
+    graph.mergeEdge(4, 5);
+    graph.mergeEdge(5, 6);
+    graph.mergeEdge(4, 6);
+
+    var result = louvain.detailed(graph);
+
+    assert.closeTo(result.modularity, 0.3673, 0.0001);
+
+    assert.strictEqual(result.communities[1], result.communities[2]);
+    assert.strictEqual(result.communities[2], result.communities[3]);
+    assert.strictEqual(result.communities[4], result.communities[5]);
+    assert.strictEqual(result.communities[5], result.communities[6]);
+
+    graph.upgradeToMulti();
+    var toDuplicate = [];
+
+    graph.forEachEdge(function(_e, _a, s, t) {
+      toDuplicate.push([s, t]);
+    });
+
+    toDuplicate.forEach(function(edge) {
+      graph.addEdge(edge[0], edge[1]);
+    });
+
+    graph.forEachEdge(function(edge) {
+      graph.setEdgeAttribute(edge, 'weight', 0.5);
+    });
+
+    var multiResult = louvain.detailed(graph, {weighted: true});
+
+    assert.closeTo(result.modularity, multiResult.modularity, 0.00001);
+
+    assert.strictEqual(multiResult.communities[1], multiResult.communities[2]);
+    assert.strictEqual(multiResult.communities[2], multiResult.communities[3]);
+    assert.strictEqual(multiResult.communities[4], multiResult.communities[5]);
+    assert.strictEqual(multiResult.communities[5], multiResult.communities[6]);
   });
 });
