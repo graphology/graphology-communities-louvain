@@ -70,8 +70,10 @@ function addWeightToCommunity(map, community, weight) {
   map.set(community, currentWeight);
 }
 
+var EPSILON = 1e-10;
+
 function tieBreaker(bestCommunity, currentCommunity, targetCommunity, delta, bestDelta) {
-  if (delta === bestDelta) {
+  if (Math.abs(delta - bestDelta) < EPSILON) {
     if (bestCommunity === currentCommunity) {
       return false;
     }
@@ -82,6 +84,8 @@ function tieBreaker(bestCommunity, currentCommunity, targetCommunity, delta, bes
   else if (delta > bestDelta) {
     return true;
   }
+
+  return false;
 }
 
 function undirectedLouvain(detailed, graph, options) {
