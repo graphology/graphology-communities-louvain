@@ -28,6 +28,10 @@ npm install graphology-communities-louvain
 
 Runs the Louvain algorithm to detect communities in the given graph. It works both for undirected & directed graph by using the relevant modularity computations.
 
+This function also works on multi graphs but won't work with mixed graph as it is not trivial to adapt modularity to this case. As such, if you need to process a true mixed graph (this function will correctly handle mixed graphs containing only directed or undirected edges), cast your graph as either directed or undirected using [graphology-operators](https://github.com/graphology/graphology-operators) dedicated functions.
+
+Note also that this algorithm's run time is bounded by the number of edges in your graph. As such, it might be preferable, in some cases, to cast your multi graph as a simple one using [graphology-operators](https://github.com/graphology/graphology-operators) functions for better performance.
+
 Note that the community labels are returned as an integer range from 0 to n.
 
 ```js
