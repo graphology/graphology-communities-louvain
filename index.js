@@ -3,7 +3,7 @@
  * =============================
  *
  * JavaScript implementation of the famous Louvain community detection
- * algorithms for graphology.
+ * algorithm for graphology.
  *
  * [Articles]
  * M. E. J. Newman, « Modularity and community structure in networks »,
