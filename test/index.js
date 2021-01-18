@@ -259,7 +259,7 @@ describe('graphology-communities-louvain', function() {
     });
 
     assert.strictEqual(result.count, 18);
-    assert.closeTo(result.modularity, 0.7275, 0.0001);
+    assert.closeTo(result.modularity, 0.7278, 0.0001);
   });
 
   it('should be possible to use fast local moves in the directed case.', function() {
@@ -338,7 +338,7 @@ describe('graphology-communities-louvain', function() {
     assert.strictEqual(multiResult.communities[5], multiResult.communities[6]);
   });
 
-  it.skip('should work with the ricardo graph.', function() {
+  it('should work with the ricardo graph.', function() {
     var customRng = seedrandom('nansi');
 
     var result = louvain.detailed(ricardo, {
@@ -348,6 +348,7 @@ describe('graphology-communities-louvain', function() {
       weighted: true
     });
 
-    // console.log(result);
+    assert.strictEqual(result.count, 37);
+    assert.closeTo(result.modularity, 0.2464, 0.0001);
   });
 });

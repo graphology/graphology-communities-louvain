@@ -222,7 +222,7 @@ function undirectedLouvain(detailed, graph, options) {
         }
 
         // Should we move the node?
-        if (bestDelta < 0 || bestCommunity !== currentCommunity) {
+        if (bestDelta < 0) {
 
           // NOTE: this is to allow nodes to move back to their own singleton
           // This code however only deals with modularity (e.g. the condition
@@ -234,27 +234,39 @@ function undirectedLouvain(detailed, graph, options) {
           // is indeed less than 0. To handle different metrics, one should
           // consider computing the delta for going back to singleton because
           // it might not be 0.
-          if (bestDelta < 0) {
-            index.isolate(i, degree);
+          bestCommunity = index.isolate(i, degree);
+
+          // If the node was already in a singleton community, we don't consider
+          // a move was made
+          if (bestCommunity === currentCommunity)
+            continue;
+        }
+        else {
+
+          // If no move was made, we continue to next node
+          if (bestCommunity === currentCommunity) {
+            continue;
           }
           else {
+
+            // Actually moving the node to a new community
             index.move(i, degree, bestCommunity);
           }
+        }
 
-          moveWasMade = true;
-          currentMoves++;
+        moveWasMade = true;
+        currentMoves++;
 
-          // Adding neighbors from other communities to the queue
-          start = index.starts[i];
-          end = index.starts[i + 1];
+        // Adding neighbors from other communities to the queue
+        start = index.starts[i];
+        end = index.starts[i + 1];
 
-          for (; start < end; start++) {
-            j = index.neighborhood[start];
-            targetCommunity = index.belongings[j];
+        for (; start < end; start++) {
+          j = index.neighborhood[start];
+          targetCommunity = index.belongings[j];
 
-            if (targetCommunity !== bestCommunity)
-              queue.enqueue(j);
-          }
+          if (targetCommunity !== bestCommunity)
+            queue.enqueue(j);
         }
       }
 
@@ -339,7 +351,7 @@ function undirectedLouvain(detailed, graph, options) {
           }
 
           // Should we move the node?
-          if (bestDelta < 0 || bestCommunity !== currentCommunity) {
+          if (bestDelta < 0) {
 
             // NOTE: this is to allow nodes to move back to their own singleton
             // This code however only deals with modularity (e.g. the condition
@@ -351,15 +363,28 @@ function undirectedLouvain(detailed, graph, options) {
             // is indeed less than 0. To handle different metrics, one should
             // consider computing the delta for going back to singleton because
             // it might not be 0.
-            if (bestDelta < 0) {
-              index.isolate(i, degree);
+            bestCommunity = index.isolate(i, degree);
+
+            // If the node was already in a singleton community, we don't consider
+            // a move was made
+            if (bestCommunity === currentCommunity)
+              continue;
+          }
+          else {
+
+            // If no move was made, we continue to next node
+            if (bestCommunity === currentCommunity) {
+              continue;
             }
             else {
+
+              // Actually moving the node to a new community
               index.move(i, degree, bestCommunity);
             }
-            localMoveWasMade = true;
-            currentMoves++;
           }
+
+          localMoveWasMade = true;
+          currentMoves++;
         }
 
         localMoves.push(currentMoves);
@@ -529,7 +554,7 @@ function directedLouvain(detailed, graph, options) {
         }
 
         // Should we move the node?
-        if (bestDelta < 0 || bestCommunity !== currentCommunity) {
+        if (bestDelta < 0) {
 
           // NOTE: this is to allow nodes to move back to their own singleton
           // This code however only deals with modularity (e.g. the condition
@@ -541,27 +566,39 @@ function directedLouvain(detailed, graph, options) {
           // is indeed less than 0. To handle different metrics, one should
           // consider computing the delta for going back to singleton because
           // it might not be 0.
-          if (bestDelta < 0) {
-            index.isolate(i, inDegree, outDegree);
+          bestCommunity = index.isolate(i, inDegree, outDegree);
+
+          // If the node was already in a singleton community, we don't consider
+          // a move was made
+          if (bestCommunity === currentCommunity)
+            continue;
+        }
+        else {
+
+          // If no move was made, we continue to next node
+          if (bestCommunity === currentCommunity) {
+            continue;
           }
           else {
+
+            // Actually moving the node to a new community
             index.move(i, inDegree, outDegree, bestCommunity);
           }
+        }
 
-          moveWasMade = true;
-          currentMoves++;
+        moveWasMade = true;
+        currentMoves++;
 
-          // Adding neighbors from other communities to the queue
-          start = index.starts[i];
-          end = index.starts[i + 1];
+        // Adding neighbors from other communities to the queue
+        start = index.starts[i];
+        end = index.starts[i + 1];
 
-          for (; start < end; start++) {
-            j = index.neighborhood[start];
-            targetCommunity = index.belongings[j];
+        for (; start < end; start++) {
+          j = index.neighborhood[start];
+          targetCommunity = index.belongings[j];
 
-            if (targetCommunity !== bestCommunity)
-              queue.enqueue(j);
-          }
+          if (targetCommunity !== bestCommunity)
+            queue.enqueue(j);
         }
       }
 
@@ -655,7 +692,7 @@ function directedLouvain(detailed, graph, options) {
           }
 
           // Should we move the node?
-          if (bestDelta < 0 || bestCommunity !== currentCommunity) {
+          if (bestDelta < 0) {
 
             // NOTE: this is to allow nodes to move back to their own singleton
             // This code however only deals with modularity (e.g. the condition
@@ -667,15 +704,28 @@ function directedLouvain(detailed, graph, options) {
             // is indeed less than 0. To handle different metrics, one should
             // consider computing the delta for going back to singleton because
             // it might not be 0.
-            if (bestDelta < 0) {
-              index.isolate(i, inDegree, outDegree);
+            bestCommunity = index.isolate(i, inDegree, outDegree);
+
+            // If the node was already in a singleton community, we don't consider
+            // a move was made
+            if (bestCommunity === currentCommunity)
+              continue;
+          }
+          else {
+
+            // If no move was made, we continue to next node
+            if (bestCommunity === currentCommunity) {
+              continue;
             }
             else {
+
+              // Actually moving the node to a new community
               index.move(i, inDegree, outDegree, bestCommunity);
             }
-            localMoveWasMade = true;
-            currentMoves++;
           }
+
+          localMoveWasMade = true;
+          currentMoves++;
         }
 
         localMoves.push(currentMoves);
