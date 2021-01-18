@@ -9,9 +9,12 @@ var assert = require('chai').assert,
     emptyGraph = require('graphology-generators/classic/empty'),
     toUndirected = require('graphology-operators/to-undirected'),
     netToImg = require('net-to-img'),
+    path = require('path'),
+    gexf = require('graphology-gexf'),
+    fs = require('fs'),
     louvain = require('../');
 
-// Tweaking defaults fot tests
+// Tweaking defaults for tests
 louvain.defaults.randomWalk = false;
 louvain.defaults.fastLocalMoves = false;
 
@@ -94,6 +97,12 @@ function printReport(result) {
 /**
  * Datasets.
  */
+function loadGexfDataset(name) {
+  var xml = fs.readFileSync(path.join(__dirname, 'datasets', name + '.gexf'), 'utf-8');
+
+  return gexf.parse(Graph, xml);
+}
+
 var clique3 = parse(require('./datasets/clique3.json'), TYPE.UNDIRECTED),
     complex500 = parse(require('./datasets/complex500.json'), TYPE.UNDIRECTED),
     undirected500 = parse(require('./datasets/undirected500.json'), TYPE.UNDIRECTED),
@@ -101,6 +110,7 @@ var clique3 = parse(require('./datasets/clique3.json'), TYPE.UNDIRECTED),
     directed1000 = parse(require('./datasets/directed1000.json'), TYPE.DIRECTED);
 
 var euroSis = Graph.DirectedGraph.from(require('./datasets/eurosis.json'));
+var ricardo = loadGexfDataset('1898');
 
 var undirectedEuroSis = toUndirected(euroSis);
 
@@ -326,5 +336,18 @@ describe('graphology-communities-louvain', function() {
     assert.strictEqual(multiResult.communities[2], multiResult.communities[3]);
     assert.strictEqual(multiResult.communities[4], multiResult.communities[5]);
     assert.strictEqual(multiResult.communities[5], multiResult.communities[6]);
+  });
+
+  it.skip('should work with the ricardo graph.', function() {
+    var customRng = seedrandom('nansi');
+
+    var result = louvain.detailed(ricardo, {
+      rng: customRng,
+      randomWalk: true,
+      fastLocalMoves: true,
+      weighted: true
+    });
+
+    // console.log(result);
   });
 });
